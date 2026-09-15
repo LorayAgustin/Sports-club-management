@@ -1,0 +1,15 @@
+services:
+  database:
+    image: postgres:15-alpine #Le indica a Docker qué "plantilla" descargar de Docker Hub.
+    container_name: postgres-tpEspecial #Define un nombre fijo y entendible para el contenedor cuando esté corriendo en tu ThinkPad.
+    environment:
+      - POSTGRES_DB=tpEspecial_db
+      - POSTGRES_USER=admin_tpEspecial
+      - POSTGRES_PASSWORD=admin_contra
+    ports:
+      - "5432:5432"
+    volumes: #Abre la sección para configurar los discos de almacenamiento persistente del contenedor.
+      - ./db/schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
