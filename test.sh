@@ -19,7 +19,7 @@ if command -v sqlc >/dev/null 2>&1; then
 fi
 
 echo "=== 5. Ejecutando Tests de Go con paquete 'testing' ===" 
-go test -v ./... 
+docker compose run --build --rm app go test -v ./...
 
 echo "=== 6. Tareas posteriores: Limpiando contenedores y volúmenes ===" 
 docker compose down -v 
