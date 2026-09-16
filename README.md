@@ -1,16 +1,35 @@
-Este repositorio contiene la resolucion de la primer entrega del **TP1: Mi Primera Aplicacion Web**
+# Sport-Club-Management
 
-Requisitos:
-    *Tener instalado Go (version 1.20 o superior)
+Nuestra pagina web permite administrar la información del club, los deportes que se ofrecen y los socios que pertenecen al mismo.
+
+Este repositorio contiene la resolucion de la segunda entrega del **TP2: Persistiendo el Dominio**
+
+---
+
+## Requisitos:
+    * Tener instalado Go (version 1.20 o superior)
+    * sqlc: v2
+    * PostgreSQL: 15-alpine
+    * Docker Compose: 3.8
+    * Driver de go: github.com/lib/pq
 
 Instruccion de ejecucion:
     1. Clonar el repositorio y acceder al proyecto.
-        *En el bash escribe `git clone https://github.com/LorayAgustin/Sports-club-management.git`.
-        *Luego posicionate con cd en la carpeta aplicacion_web.
+        *Luego posicionate con cd en la carpeta Sports-club-management.
+```bash
+git clone https://github.com/LorayAgustin/Sports-club-management.git
+cd Sports-club-management
+```
     
-    2. Cambiar a la rama de tp1
+    2. Cambiar a la rama de tp2
         *En caso de que se cree una rama main principal por defecto (ya que no subimos la main), realizar el comando 
-        `git checkout tp1` para cambiar a la misma.
-    
-    3. Iniciar el servidor web.
-        *Ejecutar el comando `go run .` en la terminal del IDE.
+        `git checkout tp2` para cambiar a la misma.
+```bash
+git checkout tp2
+./test.sh
+```
+
+    3. Correr los tests.
+```bash
+./test.sh
+```
