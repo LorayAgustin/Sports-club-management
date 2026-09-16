@@ -1,0 +1,38 @@
+services:
+  # -------------------------------------------------------------
+  # 1. Base de Datos PostgreSQL
+  # -------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: postgres-tpEspecial
+    restart: always
+    environment:
+      POSTGRES_DB: tpEspecial_db
+      POSTGRES_USER: admin_tpEspecial
+      POSTGRES_PASSWORD: admin_contra
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - postgres_data:/var/lib/postgresql/data
+
+  # -------------------------------------------------------------
+  # 2. Aplicación Go (Sports-club-management)
+  # -------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-app-tpEspecial
+    environment:
+      - DB_URL=postgres://admin_tpEspecial:admin_contra@db:5432/tpEspecial_db?sslmode=disable
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+# -------------------------------------------------------------
+# Volúmenes Persistentes
+# -------------------------------------------------------------
+volumes:
+  postgres_data:
