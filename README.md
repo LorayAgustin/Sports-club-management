@@ -15,13 +15,10 @@ Este repositorio contiene la resolucion de la segunda entrega del **TP2: Persist
 
 Instruccion de ejecucion:
     1. Clonar el repositorio y acceder al proyecto.
-        *Luego posicionate con cd en la carpeta aplicacion_web.
+        *Luego posicionate con cd en la carpeta Sports-club-management.
 ```bash
 git clone https://github.com/LorayAgustin/Sports-club-management.git
 cd Sports-club-management
-git checkout tp2
-./test.sh
-``/test.sh
 ```
     
     2. Cambiar a la rama de tp2
