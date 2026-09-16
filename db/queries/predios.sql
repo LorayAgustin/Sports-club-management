@@ -1,6 +1,6 @@
 -- name: CreatePredio :one
-INSERT INTO predios (id_Predio, nombre, direccion)
-    VALUES ($1, $2, $3) RETURNING *;
+INSERT INTO predios (nombre, direccion)
+    VALUES ($1, $2) RETURNING *;
 
 -- name: GetPredio :one
 SELECT * FROM predios WHERE id_Predio = $1;

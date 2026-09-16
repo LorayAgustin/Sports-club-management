@@ -46,8 +46,8 @@ CREATE TABLE practicas (
     id_Categoria INT NOT NULL REFERENCES categorias(id_Categoria) ON DELETE CASCADE,
     id_Predio INT NOT NULL REFERENCES predios(id_Predio) ON DELETE CASCADE,
     diaSemana VARCHAR(20) NOT NULL,
-    horaInicio TIME NOT NULL,
-    horaFin TIME NOT NULL
+    horaInicio TIMESTAMP NOT NULL,
+    horaFin TIMESTAMP NOT NULL
 );
 
 
