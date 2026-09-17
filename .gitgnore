@@ -1,0 +1,32 @@
+# Binarios compilados de Go (ejecutables)
+/servidor
+/main
+*.exe
+*.exe?
+*.dll
+*.so
+*.dylib
+
+# Archivos temporales de pruebas y cobertura de código
+*.test
+*.out
+coverage.txt
+*.prof
+
+# Archivos de entorno y logs
+.env
+.env.local
+*.log
+
+# Carpetas y archivos de editores / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Datos locales de Docker (si los tuvieras en carpeta)
+postgres_data/
