@@ -6,49 +6,6 @@ Este repositorio contiene la resolucion de la segunda entrega del **TP2: Persist
 
 ---
 
-## Requisitos:
-
-* PostgreSQL: 15-alpine
-* Docker Compose: 3.8
-* Driver de go: github.com/jackc/pgx/v5
-* No se necesita tener Go ni sqlc instalados localmente gracias al Dockerfile
-
----
-
-## Instrucciones de ejecucion:
-1. **Clonar el repositorio y acceder al proyecto.**
-    * Luego posicionate con cd en la carpeta Sports-club-management.
-```bash
-git clone https://github.com/LorayAgustin/Sports-club-management.git
-cd Sports-club-management
-```
-    
-2. **Cambiar a la rama de tp2.**
-    * En caso de que se cree una rama main principal por defecto (ya que no subimos la main), realizar el comando para cambiar a la rama tp2.
-```bash
-git checkout tp2
-```
-
-3. **Correr los tests.**
-```bash
-chmod +x test.sh
-./test.sh
-```
----
-
-## Explicacion ejecucion test.sh
-1. Limpieza de contenedores y volumnes viejos
-2. Levantamiento del contenedor de la Base de Datos
-3. Espera activa a que PostgreSQL esté listo
-4. Generación de código con sqlc **(sqlc generate)**
-5. Construcción de imagen y ejecución de pruebas en Docker
-    1. Aislamiento de Go (Dockerfile): asegura que el usuario no necesite tener Go instalado en su sistema operativo local
-    2. Ejecución de tests
-    3. Limpieza del contenedor al terminar las pruebas
-6. Baja del contenedor (limpieza de contenedores y volumenes)
-
----
-
 ## Arbol de directorios
 
 ```
@@ -95,7 +52,23 @@ Sports-club-management/
 
 ---
 
-## Informacion sobre el esquema de la BD
+## Datos de Conexión y Persistencia (PostgreSQL)
+
+La base de datos se ejecuta en un contenedor Docker con la siguiente configuración por defecto:
+
+| Parámetro | Valor |
+| :--- | :--- |
+| **Motor** | PostgreSQL 16 (Alpine) |
+| **Host (Localhost)** | `localhost` |
+| **Host (Red Docker)** | `db` / `postgres-tpEspecial` |
+| **Puerto** | `5432` |
+| **Base de Datos** | `tpEspecial_db` |
+| **Usuario** | `admin_tpEspecial` |
+| **Contraseña** | `admin_contra` |
+
+---
+
+## Informacion sobre el esquema de la BD (db/schema/schema.sql)
 
 | Tabla | Atributo | Descripción |
 | :--- | :--- | :--- |
@@ -133,38 +106,7 @@ Sports-club-management/
 
 ---
 
-## Datos de Conexión y Persistencia (PostgreSQL)
-
-La base de datos se ejecuta en un contenedor Docker con la siguiente configuración por defecto:
-
-| Parámetro | Valor |
-| :--- | :--- |
-| **Motor** | PostgreSQL 16 (Alpine) |
-| **Host (Localhost)** | `localhost` |
-| **Host (Red Docker)** | `db` / `postgres-tpEspecial` |
-| **Puerto** | `5432` |
-| **Base de Datos** | `tpEspecial_db` |
-| **Usuario** | `admin_tpEspecial` |
-| **Contraseña** | `admin_contra` |
-
-### 🔗 String de Conexión (DSN / `DB_URL`)
-
-* **Desde la máquina host (local):**
-  text
-  postgres://admin_tpEspecial:admin_contra@localhost:5432/tpEspecial_db?sslmode=disable
-
-
-
-* **Dentro de la red interna de Docker:**
-
- ```
-postgres://admin_tpEspecial:admin_contra@db:5432/tpEspecial_db?sslmode=disable
-
-```
-
---- 
-
-## Consultas y Operaciones CRUD (`db/queries/nombreTabla.sql)
+## Consultas y Operaciones CRUD (db/queries/....sql)
 
 &gt; Para gestionar el acceso a los datos, definimos las consultas SQL parametrizadas siguiendo el ciclo **CRUD** (Create, Read, Update, Delete). Mediante las anotaciones de **sqlc**, le indicamos a la herramienta el tipo de retorno esperado para que genere automáticamente el código Go seguro y tipado:
 
@@ -173,3 +115,48 @@ postgres://admin_tpEspecial:admin_contra@db:5432/tpEspecial_db?sslmode=disable
 * **ListTabla** **(** **READ** **/** **LIST** **):** Recupera la lista completa de registros almacenados utilizando la anotación `:many` para retornar una colección de datos.
 * **UpdateTabla** **(** **UPDATE** **):** Modifica los campos de un registro existente identificado por su ID, utilizando la anotación `:exec` (ejecuta la sentencia sin retornar filas).
 * **DeleteTabla** **(** **DELETE** **):** Elimina un registro de la base de datos por su ID, utilizando la anotación `:exec`
+
+--- 
+
+## Requisitos:
+
+* PostgreSQL: 16-alpine
+* Docker Compose: 3.8
+* Driver de go: github.com/jackc/pgx/v5
+* No se necesita tener Go ni sqlc instalados localmente gracias al Dockerfile
+
+---
+
+## Instrucciones de ejecucion:
+1. **Clonar el repositorio y acceder al proyecto.**
+    * Luego posicionate con cd en la carpeta Sports-club-management.
+```bash
+git clone https://github.com/LorayAgustin/Sports-club-management.git
+cd Sports-club-management
+```
+    
+2. **Cambiar a la rama de tp2.**
+    * En caso de que se cree una rama main principal por defecto (ya que no subimos la main), realizar el comando para cambiar a la rama tp2.
+```bash
+git checkout tp2
+```
+
+3. **Correr los tests.**
+```bash
+chmod +x test.sh
+./test.sh
+```
+--- 
+
+## Explicacion ejecucion test.sh
+1. Limpieza de contenedores y volumnes viejos
+2. Levantamiento del contenedor de la Base de Datos
+3. Espera activa a que PostgreSQL esté listo
+4. Generación de código con sqlc **(sqlc generate)**
+5. Construcción de imagen y ejecución de pruebas en Docker
+    1. Aislamiento de Go (Dockerfile): asegura que el usuario no necesite tener Go instalado en su sistema operativo local
+    2. Ejecución de tests
+    3. Limpieza del contenedor al terminar las pruebas
+6. Baja del contenedor (limpieza de contenedores y volumenes)
+
+---
