@@ -108,7 +108,7 @@ La base de datos se ejecuta en un contenedor Docker con la siguiente configuraci
 
 ## Consultas y Operaciones CRUD (db/queries/....sql)
 
-&gt; Para gestionar el acceso a los datos, definimos las consultas SQL parametrizadas siguiendo el ciclo **CRUD** (Create, Read, Update, Delete). Mediante las anotaciones de **sqlc**, le indicamos a la herramienta el tipo de retorno esperado para que genere automáticamente el código Go seguro y tipado:
+Para gestionar el acceso a los datos, definimos las consultas SQL parametrizadas siguiendo el ciclo **CRUD** (Create, Read, Update, Delete). Mediante las anotaciones de **sqlc**, le indicamos a la herramienta el tipo de retorno esperado para que genere automáticamente el código Go seguro y tipado:
 
 * **CreateTabla** **(** **CREATE** **):** Inserta un nuevo registro en la base de datos (`INSERT INTO ...`) utilizando la anotación `:one` para retornar la entidad recién creada con su ID generado.
 * **GetTabla** **(** **READ** **/** **GET** **):** Obtiene un registro específico a partir de su clave primaria (`id`) utilizando la anotación `:one`.
@@ -158,5 +158,3 @@ chmod +x test.sh
     2. Ejecución de tests
     3. Limpieza del contenedor al terminar las pruebas
 6. Baja del contenedor (limpieza de contenedores y volumenes)
-
----
