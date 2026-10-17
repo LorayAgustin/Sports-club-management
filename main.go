@@ -20,6 +20,8 @@ func main() {
 
 	defer db.Close()
 
+	ctx := context.Background()
+
 	if err := db.PingContext(ctx); err != nil {
 		log.Fatalf("Fallo de ping a la DB: %v", err)
 	}
@@ -27,6 +29,5 @@ func main() {
 	log.Println("Conexión exitosa a la base de datos")
 
 	queries := sqlc.New(db)
-	ctx := context.Background()
 
 }
