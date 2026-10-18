@@ -68,25 +68,26 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 
 // POST /usuarios
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var input logic.Usuario
+	var createUsuario logic.Usuario
 
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&createUsuario); err != nil {
 		// Error 400: Formato JSON inválido
-		http.Error(w, "Formato JSON invalido", http.StatusBadRequest)
+		http.Error(w, "Formato JSON inválido", http.StatusBadRequest)
 		return
 	}
 
-	if err := logic.ValidateUsuario(input); err != nil {
+	if err := logic.ValidateUsuario(createUsuario); err != nil {
+		// Error 400: Validación de datos fallida
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	user, err := h.queries.CreateUsuario(r.Context(), sqlc.CreateUsuarioParams{
-		Nombre:          input.Nombre,
-		Email:           input.Email,
-		Contrasena:      input.Contrasena,
-		Fechanacimiento: input.FechaNacimiento,
-		Rol:             input.Rol,
+		Nombre:          createUsuario.Nombre,
+		Email:           createUsuario.Email,
+		Contrasena:      createUsuario.Contrasena,
+		Fechanacimiento: createUsuario.FechaNacimiento,
+		Rol:             createUsuario.Rol,
 	})
 	if err != nil {
 		// Error 500: Error interno del servidor
@@ -115,4 +116,60 @@ func (h *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request, id int
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
+}
+
+// PUT /usuarios/{id}
+func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int32) {
+	var updatedUsuario logic.Usuario
+
+	if err := json.NewDecoder(r.Body).Decode(&updatedUsuario); err != nil {
+		// Error 400: Formato JSON inválido
+		http.Error(w, "Formato JSON inválido", http.StatusBadRequest)
+		return
+	}
+
+	if err := logic.ValidateUsuario(updatedUsuario); err != nil {
+		// Error 400: Validación de datos fallida
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.queries.UpdateUsuario(r.Context(), sqlc.UpdateUsuarioParams{
+		ID:              id,
+		Nombre:          updatedUsuario.Nombre,
+		Email:           updatedUsuario.Email,
+		Contrasena:      updatedUsuario.Contrasena,
+		Fechanacimiento: updatedUsuario.FechaNacimiento,
+		Rol:             updatedUsuario.Rol,
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// Error 404: Usuario no encontrado
+			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
+			return
+		}
+		// Error 500: Error interno del servidor
+		http.Error(w, "Error al actualizar el usuario", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+// DELETE /usuarios/{id}
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, id int32) {
+	err := h.queries.DeleteUsuario(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// Error 404: Usuario no encontrado
+			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
+			return
+		}
+		// Error 500: Error interno del servidor
+		http.Error(w, "Error al eliminar el usuario", http.StatusInternalServerError)
+		return
+	}
+	// Estado 204: Usuario eliminado exitosamente
+	w.WriteHeader(http.StatusNoContent)
 }
