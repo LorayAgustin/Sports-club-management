@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"Sports-club-management/db/sqlc"
-	"Sports-club-management/logic"
+	sqlc "cl_gst/db/sqlc"
+	"cl_gst/logic"
 )
 
 type UserHandler struct {
@@ -134,7 +134,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int3
 		return
 	}
 
-	user, err := h.queries.UpdateUsuario(r.Context(), sqlc.UpdateUsuarioParams{
+	err := h.queries.UpdateUsuario(r.Context(), sqlc.UpdateUsuarioParams{
 		ID:              id,
 		Nombre:          updatedUsuario.Nombre,
 		Email:           updatedUsuario.Email,
@@ -154,7 +154,8 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int3
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(updatedUsuario)
 }
 
 // DELETE /usuarios/{id}
