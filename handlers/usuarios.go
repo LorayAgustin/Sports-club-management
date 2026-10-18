@@ -29,12 +29,12 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.queries.CreateUser(r.Context(), sqlc.CreateUserParams{
-		Nombre:          input.nombre,
-		Email:           input.email,
-		Contrasena:      input.contrasena,
-		FechaNacimiento: input.fechaNacimiento,
-		Rol:             input.rol,
+	user, err := h.queries.CreateUsuario(r.Context(), sqlc.CreateUsuarioParams{
+		Nombre:          input.Nombre,
+		Email:           input.Email,
+		Contrasena:      input.Contrasena,
+		Fechanacimiento: input.FechaNacimiento,
+		Rol:             input.Rol,
 	})
 	if err != nil {
 		http.Error(w, "Error al crear el usuario", http.StatusInternalServerError)
