@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -68,20 +69,26 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 
 // POST /usuarios
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var createUsuario logic.Usuario
-
-	if err := json.NewDecoder(r.Body).Decode(&createUsuario); err != nil {
-		// Error 400: Formato JSON inválido
-		http.Error(w, "Formato JSON inválido", http.StatusBadRequest)
+	// 1. Verificación de seguridad
+	if h.queries == nil {
+		http.Error(w, "Error interno: repositorio no inicializado", http.StatusInternalServerError)
 		return
 	}
 
+	// 2. Decodificación del JSON de entrada
+	var createUsuario logic.Usuario
+	if err := json.NewDecoder(r.Body).Decode(&createUsuario); err != nil {
+		http.Error(w, "Formato JSON inválido: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// 3. Validación de datos de negocio (incluyendo consulta a la DB si aplica)
 	if err := logic.ValidateUsuario(r.Context(), createUsuario, h.queries); err != nil {
-		// Error 400: Validación de datos fallida
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	// 4. Inserción en la base de datos con sqlc
 	user, err := h.queries.CreateUsuario(r.Context(), sqlc.CreateUsuarioParams{
 		Nombre:          createUsuario.Nombre,
 		Email:           createUsuario.Email,
@@ -90,11 +97,12 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Rol:             createUsuario.Rol,
 	})
 	if err != nil {
-		// Error 500: Error interno del servidor
-		http.Error(w, "Error al crear el usuario", http.StatusInternalServerError)
+		log.Printf("Error en CreateUsuario (DB): %v", err) // Imprescindible para ver errores en docker logs
+		http.Error(w, "Error al crear el usuario en la base de datos", http.StatusInternalServerError)
 		return
 	}
-	// Estado 201: Usuario creado exitosamente
+
+	// 5. Respuesta HTTP 201 Created
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(user)

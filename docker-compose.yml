@@ -15,6 +15,11 @@ services:
     volumes:
       - ./db/schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_tpEspecial -d tpEspecial_db"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
 
   # -------------------------------------------------------------
   # 2. Aplicación Go (Sports-club-management)
@@ -24,12 +29,14 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: go-app-tpEspecial
+    restart: on-failure
     environment:
       - DB_URL=postgres://admin_tpEspecial:admin_contra@db:5432/tpEspecial_db?sslmode=disable
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 # -------------------------------------------------------------
 # Volúmenes Persistentes
