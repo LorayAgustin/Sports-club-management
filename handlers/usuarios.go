@@ -76,7 +76,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := logic.ValidateUsuario(createUsuario); err != nil {
+	if err := logic.ValidateUsuario(r.Context(), createUsuario, h.queries); err != nil {
 		// Error 400: Validación de datos fallida
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -128,7 +128,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int3
 		return
 	}
 
-	if err := logic.ValidateUsuario(updatedUsuario); err != nil {
+	if err := logic.ValidateUsuario(r.Context(), updatedUsuario, h.queries); err != nil {
 		// Error 400: Validación de datos fallida
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
