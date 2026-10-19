@@ -128,8 +128,8 @@ func (h *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request, id int
 
 // PUT /usuarios/{id}
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int32) {
-	// 1. Verificar si el usuario existe en la base de datos
-	_, err := h.queries.GetUsuario(r.Context(), id)
+	// 1. Obtener el usuario existente en PostgreSQL
+	usuarioActual, err := h.queries.GetUsuario(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
@@ -146,13 +146,20 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int3
 		return
 	}
 
-	// 3. Validar los datos de negocio recibidos
-	if err := logic.ValidateUsuario(r.Context(), updatedUsuario, h.queries); err != nil {
+	// 3. Evaluar si debemos verificar duplicado de nombre en la DB:
+	// Si el nombre no cambió respecto al que tenía, pasamos 'nil' para saltear ExistsUserByName
+	var dbVal logic.UserDB = h.queries
+	if updatedUsuario.Nombre == usuarioActual.Nombre {
+		dbVal = nil
+	}
+
+	// 4. Validar los datos recibidos
+	if err := logic.ValidateUsuario(r.Context(), updatedUsuario, dbVal); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// 4. Actualizar el registro en PostgreSQL
+	// 5. Actualizar en la base de datos
 	err = h.queries.UpdateUsuario(r.Context(), sqlc.UpdateUsuarioParams{
 		ID:              id,
 		Nombre:          updatedUsuario.Nombre,
@@ -166,7 +173,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int3
 		return
 	}
 
-	// 5. Responder con 200 OK y la entidad actualizada
+	// 6. Responder 200 OK
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(updatedUsuario)
