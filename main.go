@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"os"
 
 	sqlc "cl_gst/db/sqlc"
 	"cl_gst/handlers"
@@ -15,10 +16,16 @@ import (
 func main() {
 	ctx := context.Background()
 
-	connStr := "host=localhost port=5432 user=admin_tpEspecial password=admin_contra dbname=tpEspecial_db sslmode=disable"
+	// 1. Leer la cadena de conexión desde la variable de entorno DB_URL (Docker)
+	connStr := os.Getenv("DB_URL")
+	if connStr == "" {
+		// Fallback para ejecución local fuera de Docker
+		connStr = "postgres://admin_tpEspecial:admin_contra@localhost:5432/tpEspecial_db?sslmode=disable"
+	}
+
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
-		log.Fatalf("Fallo de conexion a la DB: %v", err)
+		log.Fatalf("Fallo de conexión a la DB: %v", err)
 	}
 	defer db.Close()
 

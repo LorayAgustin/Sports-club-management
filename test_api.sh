@@ -7,11 +7,11 @@ docker compose down -v --remove-orphans
 echo "=== 2. Generando código de sqlc (si aplica) ===" 
 if command -v sqlc >/dev/null 2>&1; then 
   sqlc generate 
-  echo "Codigo de sqlc generado correctamente."
+  echo "Código de sqlc generado correctamente."
 fi
 
-echo "=== 3. Levantando contenedor de Base de Datos (PostgreSQL) ===" 
-docker compose up -d db 
+echo "=== 3. Levantando el contenedor de Base de Datos (PostgreSQL) ===" 
+docker compose up -d db
 
 echo "=== 4. Esperando que PostgreSQL esté listo y acepte conexiones ===" 
 until docker exec postgres-tpEspecial pg_isready -U admin_tpEspecial -d tpEspecial_db; do 
@@ -19,10 +19,18 @@ until docker exec postgres-tpEspecial pg_isready -U admin_tpEspecial -d tpEspeci
   sleep 2 
 done 
 
-sleep 2
+echo "=== 4b. Levantando y compilando la Aplicación Go ==="
+docker compose up -d --build app
+
+echo "=== 4c. Esperando a que la API de Go responda ==="
+until curl -s http://localhost:8080/usuarios > /dev/null; do 
+    echo "Esperando a que la API de Go responda..." 
+    sleep 2 
+done
 
 echo "=== 5. Ejecutando Pruebas HTTP de la API REST ==="
-#docker compose run --build --rm app go test -v ./...
+chmod +x requests.sh 
+./requests.sh
 
 echo "=== 6. Tareas posteriores: Limpiando contenedores y volúmenes ===" 
 docker compose down -v 
