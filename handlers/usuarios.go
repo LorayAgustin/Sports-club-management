@@ -128,21 +128,32 @@ func (h *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request, id int
 
 // PUT /usuarios/{id}
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int32) {
-	var updatedUsuario logic.Usuario
-
-	if err := json.NewDecoder(r.Body).Decode(&updatedUsuario); err != nil {
-		// Error 400: Formato JSON inválido
-		http.Error(w, "Formato JSON inválido", http.StatusBadRequest)
+	// 1. Verificar si el usuario existe en la base de datos
+	_, err := h.queries.GetUsuario(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Error al verificar el usuario en la base de datos", http.StatusInternalServerError)
 		return
 	}
 
+	// 2. Decodificar el JSON de entrada
+	var updatedUsuario logic.Usuario
+	if err := json.NewDecoder(r.Body).Decode(&updatedUsuario); err != nil {
+		http.Error(w, "Formato JSON inválido: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// 3. Validar los datos de negocio recibidos
 	if err := logic.ValidateUsuario(r.Context(), updatedUsuario, h.queries); err != nil {
-		// Error 400: Validación de datos fallida
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err := h.queries.UpdateUsuario(r.Context(), sqlc.UpdateUsuarioParams{
+	// 4. Actualizar el registro en PostgreSQL
+	err = h.queries.UpdateUsuario(r.Context(), sqlc.UpdateUsuarioParams{
 		ID:              id,
 		Nombre:          updatedUsuario.Nombre,
 		Email:           updatedUsuario.Email,
@@ -151,16 +162,11 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int3
 		Rol:             updatedUsuario.Rol,
 	})
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: Usuario no encontrado
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-			return
-		}
-		// Error 500: Error interno del servidor
 		http.Error(w, "Error al actualizar el usuario", http.StatusInternalServerError)
 		return
 	}
 
+	// 5. Responder con 200 OK y la entidad actualizada
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(updatedUsuario)

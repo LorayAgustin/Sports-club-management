@@ -42,10 +42,10 @@ echo "Prueba 6: Actualizar un usuario existente (PUT /usuarios/{id}) - Se espera
 curl -i -X PUT "$BASE_DIR/usuarios/1" \
     -H "Content-Type: application/json" \
     -d '{
-        "nombre":"Luca Loray",
+        "nombre":"Agustin Loray",
         "email":"luca.actualizado@email.com",
         "contrasena":"Contrasena123$",
-        "fecha_nacimiento":"2000-01-01T00:00:00Z",
+        "fecha_nacimiento":"2001-01-01T00:00:00Z",
         "rol":"administrador"
     }'
 
