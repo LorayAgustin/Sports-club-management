@@ -19,3 +19,6 @@ UPDATE usuarios SET
 
 -- name: DeleteUsuario :exec
 DELETE FROM usuarios WHERE id = $1;
+
+-- name: ExistsUserByName :one
+SELECT EXISTS(SELECT 1 FROM usuarios WHERE nombre = $1);

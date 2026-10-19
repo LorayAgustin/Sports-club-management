@@ -52,6 +52,17 @@ func (q *Queries) DeleteUsuario(ctx context.Context, id int32) error {
 	return err
 }
 
+const existsUserByName = `-- name: ExistsUserByName :one
+SELECT EXISTS(SELECT 1 FROM usuarios WHERE nombre = $1)
+`
+
+func (q *Queries) ExistsUserByName(ctx context.Context, nombre string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, existsUserByName, nombre)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const getUsuario = `-- name: GetUsuario :one
 SELECT id, nombre, email, contrasena, fechanacimiento, rol FROM usuarios WHERE id = $1
 `
