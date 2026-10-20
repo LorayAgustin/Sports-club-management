@@ -99,7 +99,7 @@ echo "=================================================="
 echo "=== 4. PRUEBAS DE ELIMINACIÓN (DELETE /usuarios/) ==="
 echo "=================================================="
 
-echo "Prueba 11: Eliminar usuario existente (ID 1) - Se espera: 200 OK o 204 No Content"
+echo "Prueba 11: Eliminar usuario existente (ID 1) - Se espera: 204 No Content"
 curl -i -X DELETE "$BASE_DIR/usuarios/1"
 echo -e "\n"
 
