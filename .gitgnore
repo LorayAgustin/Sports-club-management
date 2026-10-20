@@ -32,4 +32,4 @@ Thumbs.db
 postgres_data/
 
 # Archivos creados por el generate sqlc
-aplicacion_web/db/sqlc/
+db/sqlc/
