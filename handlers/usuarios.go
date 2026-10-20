@@ -202,19 +202,3 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, id int3
 	// Estado 204: Usuario eliminado exitosamente
 	w.WriteHeader(http.StatusNoContent)
 }
-
-/*
-err := h.queries.DeleteUsuario(r.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: Usuario no encontrado
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-			return
-		}
-		// Error 500: Error interno del servidor
-		http.Error(w, "Error al eliminar el usuario", http.StatusInternalServerError)
-		return
-	}
-	// Estado 204: Usuario eliminado exitosamente
-	w.WriteHeader(http.StatusNoContent)
-*/
