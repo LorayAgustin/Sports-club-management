@@ -30,3 +30,6 @@ Thumbs.db
 
 # Datos locales de Docker (si los tuvieras en carpeta)
 postgres_data/
+
+# Archivos creados por el generate sqlc
+aplicacion_web/db/sqlc/
