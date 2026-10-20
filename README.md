@@ -2,7 +2,7 @@
 
 Nuestra pagina web permite administrar la información del club, los deportes que se ofrecen y los socios que pertenecen al mismo.
 
-Este repositorio contiene la resolucion de la segunda entrega del **TP2: Persistiendo el Dominio**
+Este repositorio contiene la resolucion de la tercera entrega del **TP3: Exponiendo la Logica como API**
 
 ---
 
@@ -31,6 +31,10 @@ Sports-club-management/
 │       ├── predios.sql.go
 │       ├── socios.sql.go
 │       └── usuarios.sql.go
+├── handlers/              # Handlers HTTP de las distintas entidades
+│   └── usuarios.go
+├── logic/                 # Logica de las distintas entidades
+│   └── usuarios.go
 ├── test/                  # Suite de pruebas unitarias CRUD
 │   ├── categorias_test.go
 │   ├── deportes_test.go
@@ -45,7 +49,8 @@ Sports-club-management/
 ├── go.sum                 # Sumas de verificación de dependencias
 ├── main.go                # Punto de entrada del servidor
 ├── sqlc.yaml              # Configuración y mapeos para sqlc
-├── test.sh                # Script de ejecución automatizada de pruebas
+├── test_api.sh            # Script de ejecución automatizada de pruebas
+├── request.sh             # Script contenedor de pruebas a realizar
 └── README.md              # Documentación del proyecto
 
 ```
@@ -127,6 +132,36 @@ Para gestionar el acceso a los datos, definimos las consultas SQL parametrizadas
 
 ---
 
+## Documentación de la API REST
+
+A continuación se detallan los endpoints expuestos por el servicio para la gestión de **[Usuarios]**:
+
+| Método     | Endpoint         | Descripción                                 | Body (JSON)                                                                                                | Respuestas HTTP                                  |
+| ---------- | ---------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| **POST**   | `/usuarios`      | Crea un nuevo usuario                       | `{ "nombre": "...", "email": "...", "contrasena": "...", "fecha_nacimiento": "YYYY-MM-DD", "rol": "..." }` | `201 Created`<br />`400 Bad Request`               |
+| **GET**    | `/usuarios`      | Obtiene el listado completo de usuarios     | *Ninguno*                                                                                                  | `200 OK`<br />`500 Internal Error`                 |
+| **GET**    | `/usuarios/{id}` | Busca un usuario por su ID                  | *Ninguno*                                                                                                  | `200 OK`<br />`404 Not Found`                      |
+| **PUT**    | `/usuarios/{id}` | Actualiza los datos de un usuario existente | `{ "nombre": "...", "email": "...", "contrasena": "...", "fecha_nacimiento": "YYYY-MM-DD", "rol": "..." }` | `200 OK`<br />`400 Bad Request`<br />`404 Not Found` |
+| **DELETE** | `/usuarios/{id}` | Elimina un usuario por su ID                | *Ninguno*                                                                                                  | `204 No Content`<br />`404 Not Found`              |
+
+---
+
+### Capa de Lógica de Negocio (`/logic`)
+* **Responsabilidad:** Contiene las funciones puras y validaciones del dominio (ej. `ValidateUsuario`, comprobación de formatos de fecha, reglas de negocio).
+* **Desacoplamiento:** Es totalmente independiente de HTTP y de la base de datos; no utiliza `http.Request` ni `http.ResponseWriter`, lo que permite probarla mediante tests unitarios de Go sin necesidad de levantar un servidor.
+
+---
+
+### Capa de Handlers HTTP (`/handlers`)
+* **Responsabilidad:** Actúa como controlador de la API REST.
+* **Flujo:**
+  1. Recibe la petición HTTP y decodifica el cuerpo en formato JSON (`r.Body`).
+  2. Invoca las validaciones de la capa `logic`.
+  4. Llama a las consultas persistentes autogeneradas por `sqlc`.
+  5. Construye la respuesta HTTP estableciendo el encabezado `Content-Type: application/json` y retornando los códigos de estado apropiados (`201 Created`, `200 OK`, `400 Bad Request`, `404 Not Found`, `500 Internal Error`).
+
+---
+
 ## Instrucciones de ejecucion:
 1. **Clonar el repositorio y acceder al proyecto.**
     * Luego posicionate con cd en la carpeta Sports-club-management.
@@ -135,26 +170,25 @@ git clone https://github.com/LorayAgustin/Sports-club-management.git
 cd Sports-club-management
 ```
     
-2. **Cambiar a la rama de tp2.**
-    * En caso de que se cree una rama main principal por defecto (ya que no subimos la main), realizar el comando para cambiar a la rama tp2.
+2. **Cambiar a la rama de tp3.**
+    * En caso de que se cree una rama main principal por defecto (ya que no subimos la main), realizar el comando para cambiar a la rama tp3.
 ```bash
-git checkout tp2
+git checkout tp3
 ```
 
-3. **Correr los tests.**
+3. **Ejecucion de pruebas.**
 ```bash
-chmod +x test.sh
-./test.sh
+chmod +x test_api.sh
+./test_api.sh
 ```
 --- 
 
-## Explicacion ejecucion test.sh
+## Explicacion ejecucion test_api.sh
 1. Limpieza de contenedores y volumnes viejos
-2. Levantamiento del contenedor de la Base de Datos
-3. Espera activa a que PostgreSQL esté listo
-4. Generación de código con sqlc **(sqlc generate)**
-5. Construcción de imagen y ejecución de pruebas en Docker
-    1. Aislamiento de Go (Dockerfile): asegura que el usuario no necesite tener Go instalado en su sistema operativo local
-    2. Ejecución de tests
-    3. Limpieza del contenedor al terminar las pruebas
-6. Baja del contenedor (limpieza de contenedores y volumenes)
+2. Generación de código con sqlc **(sqlc generate)**
+3. Levantamiento del contenedor de la Base de Datos
+4. Espera activa a que PostgreSQL esté listo
+5. Compilación y despliegue del servicio web Go
+6. Espera activa a la API HTTP
+7. Ejecucion de las Pruebas HTTP de la API REST (`requests.sh`)
+8. Limpieza posterior del entorno
