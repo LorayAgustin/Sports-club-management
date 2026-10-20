@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
-	"regexp"
+	"regexp" // Biblioteca para expresiones regulares usada para la verificacion del email.
 	"strings"
 	"time"
 )
