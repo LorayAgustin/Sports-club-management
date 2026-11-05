@@ -176,7 +176,13 @@ cd Sports-club-management
 git checkout tp3
 ```
 
-3. **Ejecucion de pruebas.**
+3. **Crear el archivo .env**
+    * Copiar la plantilla ".env.example" para generar el archivo ".env" local requerido por Docker Compose:
+```bash
+cp .env.example .env
+```
+
+4. **Ejecucion de pruebas.**
 ```bash
 chmod +x test_api.sh
 ./test_api.sh
