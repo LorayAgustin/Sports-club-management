@@ -78,7 +78,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// 2. Decodificación del JSON de entrada
 	var createUsuario logic.Usuario
 	if err := json.NewDecoder(r.Body).Decode(&createUsuario); err != nil {
-		http.Error(w, "Formato JSON inválido: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Formato JSON inválido: ", http.StatusBadRequest)
 		return
 	}
 
@@ -142,7 +142,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int3
 	// 2. Decodificar el JSON de entrada
 	var updatedUsuario logic.Usuario
 	if err := json.NewDecoder(r.Body).Decode(&updatedUsuario); err != nil {
-		http.Error(w, "Formato JSON inválido: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Formato JSON inválido: ", http.StatusBadRequest)
 		return
 	}
 
