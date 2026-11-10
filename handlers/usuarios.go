@@ -78,13 +78,13 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// 2. Decodificación del JSON de entrada
 	var createUsuario logic.Usuario
 	if err := json.NewDecoder(r.Body).Decode(&createUsuario); err != nil {
-		http.Error(w, "Formato JSON inválido: ", http.StatusBadRequest)
+		http.Error(w, "Formato JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// 3. Validación de datos de negocio (incluyendo consulta a la DB si aplica)
 	if err := logic.ValidateUsuario(r.Context(), createUsuario, h.queries); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Validación de usuario fallida: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
