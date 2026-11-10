@@ -70,11 +70,11 @@ func (h *CategoriaHandler) ListCategorias(w http.ResponseWriter, r *http.Request
 // POST /categorias
 func (h *CategoriaHandler) CreateCategoria(w http.ResponseWriter, r *http.Request) {
 	if h.queries == nil {
-		http.Error(w, "Queries no inicializadas", http.StatusInternalServerError)
+		http.Error(w, "Error interno: consultas no inicializado", http.StatusInternalServerError)
 		return
 	}
 
-	var createCategoria logic.Cateagoria
+	var createCategoria logic.Categoria
 	if err := json.NewDecoder(r.Body).Decode(&createCategoria); err != nil {
 		http.Error(w, "Formato JSON invalido:", http.StatusBadRequest)
 		return
@@ -118,7 +118,7 @@ func (h *CategoriaHandler) GetCategoriaById(w http.ResponseWriter, r *http.Reque
 // PUT /categorias/{id}
 func (h *CategoriaHandler) UpdateCategoria(w http.ResponseWriter, r *http.Request, id int32) {
 
-	categoriaActual, err := h.queries.GetCategoria(r.Context(), id)
+	_, err := h.queries.GetCategoria(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Categoría no encontrada", http.StatusNotFound)

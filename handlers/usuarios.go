@@ -71,7 +71,7 @@ func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// 1. Verificación de seguridad
 	if h.queries == nil {
-		http.Error(w, "Error interno: repositorio no inicializado", http.StatusInternalServerError)
+		http.Error(w, "Error interno: consultas no inicializado", http.StatusInternalServerError)
 		return
 	}
 

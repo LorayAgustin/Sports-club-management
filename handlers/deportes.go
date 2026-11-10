@@ -58,7 +58,7 @@ func (h *DeporteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // POST /deportes
 func (h *DeporteHandler) CreateDeporte(w http.ResponseWriter, r *http.Request) {
 	if h.queries == nil {
-		http.Error(w, "Error interno: repositorio no inicializado", http.StatusInternalServerError)
+		http.Error(w, "Error interno: consultas no inicializado", http.StatusInternalServerError)
 		return
 	}
 
@@ -151,7 +151,7 @@ func (h *DeporteHandler) UpdateDeporte(w http.ResponseWriter, r *http.Request, i
 	}
 
 	if err := logic.ValidateDeporte(updatedDeporte); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Error de validación: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
