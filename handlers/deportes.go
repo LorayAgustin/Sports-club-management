@@ -73,9 +73,7 @@ func (h *DeporteHandler) CreateDeporte(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deporte, err := h.queries.CreateDeporte(r.Context(), sqlc.CreateDeporteParams{
-		Nombre: createDeporte.Nombre,
-	})
+	deporte, err := h.queries.CreateDeporte(r.Context(), createDeporte.Nombre)
 	if err != nil {
 		log.Printf("Error en CreateDeporte (DB): %v", err)
 		http.Error(w, "Error al crear el deporte: ", http.StatusInternalServerError)
@@ -136,7 +134,7 @@ func (h *DeporteHandler) GetDeporteById(w http.ResponseWriter, r *http.Request, 
 
 // PUT /deportes/{id}
 func (h *DeporteHandler) UpdateDeporte(w http.ResponseWriter, r *http.Request, id int32) {
-	deporteActual, err := h.queries.GetDeporte(r.Context(), id)
+	_, err := h.queries.GetDeporte(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Deporte no encontrado", http.StatusNotFound)
@@ -152,19 +150,14 @@ func (h *DeporteHandler) UpdateDeporte(w http.ResponseWriter, r *http.Request, i
 		return
 	}
 
-	var dbVal logic.DeporteDB = h.queries
-	if updatedDeporte.Nombre == deporteActual.Nombre {
-		dbVal = nil
-	}
-
 	if err := logic.ValidateDeporte(updatedDeporte); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = h.queries.UpdateDeporte(r.Context(), sqlc.UpdateDeporteParams{
-		ID:     id,
-		Nombre: updatedDeporte.Nombre,
+		IDDeporte: id,
+		Nombre:    updatedDeporte.Nombre,
 	})
 	if err != nil {
 		http.Error(w, "Error al actualizar el deporte: ", http.StatusInternalServerError)
