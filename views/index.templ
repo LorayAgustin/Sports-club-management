@@ -1,65 +1,25 @@
 package views
 
-import (
-	sqlc "cl_gst/db/sqlc"
-)
-
-templ IndexPage(
-	title string,
-	deportes []sqlc.Deporte,
-	predios []sqlc.Predio,
-	usuarios []sqlc.Usuario,
-	categorias []sqlc.Categoria,
-	socios []sqlc.Socio,
-) {
-	@Layout(title, indexContent(title, deportes, predios, usuarios, categorias, socios))
+// IndexPage renderiza el menú principal del club
+templ IndexPage(title string) {
+	@Layout(title, indexContent(title))
 }
 
-templ indexContent(
-	title string,
-	deportes []sqlc.Deporte,
-	predios []sqlc.Predio,
-	usuarios []sqlc.Usuario,
-	categorias []sqlc.Categoria,
-	socios []sqlc.Socio,
-) {
+templ indexContent(title string) {
 	<header class="header-principal">
 		<h1>Gestión del Club Deportivo</h1>
 	</header>
 	<main class="contenedor-principal">
 		<section class="tarjeta-seccion">
-			<h2>Gestión de Deportes</h2>
-			@DeporteForm()
-			<hr/>
-			@DeportesList(deportes)
-		</section>
-
-		<section class="tarjeta-seccion">
-			<h2>Gestión de Predios</h2>
-			@PredioForm()
-			<hr/>
-			@PrediosList(predios)
-		</section>
-
-		<section class="tarjeta-seccion">
-			<h2>Gestión de Usuarios</h2>
-			@UsuarioForm()
-			<hr/>
-			@UsuariosList(usuarios)
-		</section>
-
-		<section class="tarjeta-seccion">
-			<h2>Gestión de Categorías</h2>
-			@CategoriaForm(deportes)
-			<hr/>
-			@CategoriasList(categorias)
-		</section>
-
-		<section class="tarjeta-seccion">
-			<h2>Gestión de Socios</h2>
-			@SocioForm(usuarios)
-			<hr/>
-			@SociosList(socios)
+			<h2>Panel de Administración</h2>
+			<p>Seleccioná la sección que desees gestionar:</p>
+			<div class="menu-navegacion">
+				<a href="/deportes" class="btn-navegacion">⚽ Gestión de Deportes</a>
+				<a href="/predios" class="btn-navegacion">🏟️ Gestión de Predios</a>
+				<a href="/usuarios" class="btn-navegacion">👤 Gestión de Usuarios</a>
+				<a href="/categorias" class="btn-navegacion">🏆 Gestión de Categorías</a>
+				<a href="/socios" class="btn-navegacion">🪪 Gestión de Socios</a>
+			</div>
 		</section>
 	</main>
 }

@@ -17,6 +17,18 @@ func NewPredioHandler(queries *sqlc.Queries) *PredioHandler {
 	return &PredioHandler{queries: queries}
 }
 
+// Handler central para la ruta /deportes (despacha GET o POST según el método HTTP)
+func (h *PredioHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.Index(w, r)
+	case http.MethodPost:
+		h.Create(w, r)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
 // GET /predios: Muestra la página con el formulario y la tabla de predios
 func (h *PredioHandler) Index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/predios" && r.URL.Path != "/" {
@@ -31,7 +43,7 @@ func (h *PredioHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := views.IndexPage("Gestión del Club - Predios", predios).Render(r.Context(), w); err != nil {
+	if err := views.PrediosPage("Gestión del Club - Predios", predios).Render(r.Context(), w); err != nil {
 		log.Printf("Error al renderizar plantilla: %v", err)
 		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
 	}
