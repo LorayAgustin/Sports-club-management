@@ -40,12 +40,14 @@ function renderizarLista(deportes) {
     }
 
     deportes.forEach(deporte => {
+        const deporteId = deporte.id_deporte || deporte.id
+        
         const li = document.createElement("li");
         li.style.marginBottom = "10px";
 
         li.innerHTML = `
-            <span><strong>ID ${deporte.id}:</strong> ${deporte.nombre}</span>
-            <button class="btn-eliminar" data-id="${deporte.id}" style="margin-left: 10px; color: red;"> 
+            <span><strong>ID ${deporteId}:</strong> ${deporte.nombre}</span>
+            <button class="btn-eliminar" data-id="${deporteId}" style="margin-left: 10px; color: red;"> 
                 Eliminar 
             </button>
         `;

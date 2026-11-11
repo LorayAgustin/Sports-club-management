@@ -68,7 +68,7 @@ func (h *DeporteHandler) CreateDeporte(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := logic.ValidateDeporte(createDeporte); err != nil {
+	if err := logic.ValidateDeporte(&createDeporte); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -150,7 +150,7 @@ func (h *DeporteHandler) UpdateDeporte(w http.ResponseWriter, r *http.Request, i
 		return
 	}
 
-	if err := logic.ValidateDeporte(updatedDeporte); err != nil {
+	if err := logic.ValidateDeporte(&updatedDeporte); err != nil {
 		http.Error(w, "Error de validación: "+err.Error(), http.StatusBadRequest)
 		return
 	}
