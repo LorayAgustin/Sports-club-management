@@ -31,7 +31,7 @@ func (h *DeporteHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := views.IndexPage("Gestión del Club - Deportes", deportes).Render(r.Context(), w); err != nil {
+	if err := views.DeportesPage("Gestión del Club - Deportes", deportes).Render(r.Context(), w); err != nil {
 		log.Printf("Error al renderizar plantilla: %v", err)
 		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
 	}
