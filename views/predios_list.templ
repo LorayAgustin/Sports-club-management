@@ -1,0 +1,33 @@
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// PrediosList renderiza el listado de predios del club
+templ PrediosList(predios []sqlc.Predio) {
+	<div id="predios-list-container">
+		<h2>Predios del Club</h2>
+		if len(predios) == 0 {
+			<p>No hay predios registrados en el club actualmente.</p>
+		} else {
+			<table class="tabla-predios">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Nombre</th>
+						<th>Dirección</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, p := range predios {
+						<tr>
+							<td>{ fmt.Sprintf("%d", p.IDPredio) }</td>
+							<td>{ p.Nombre }</td>
+							<td>{ p.Direccion }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}

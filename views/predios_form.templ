@@ -1,0 +1,29 @@
+package views
+
+// PredioForm renderiza el formulario de alta de predio
+templ PredioForm() {
+	<div class="form-container">
+		<h2>Agregar Nuevo Predio</h2>
+		<form id="form-predio" class="form-flex" action="/predios" method="POST">
+			<label for="nombre-predio">Nombre del Predio:</label>
+			<input
+				type="text"
+				id="nombre-predio"
+				name="nombre"
+				placeholder="Ej: Sede Central, Campo de Deportes..."
+				required
+			/>
+			<label for="direccion-predio">Dirección:</label>
+			<input
+				type="text"
+				id="direccion-predio"
+				name="direccion"
+				placeholder="Ej: Av. España 1234..."
+				required
+			/>
+			<button type="submit" id="agregarPredio" class="btn-primario">
+				Agregar Predio
+			</button>
+		</form>
+	</div>
+}
