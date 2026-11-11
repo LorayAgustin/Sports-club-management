@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	sqlc "cl_gst/db/sqlc"
+	"cl_gst/logic"
 	"cl_gst/views"
 )
 
@@ -51,6 +52,15 @@ func (h *DeporteHandler) Create(w http.ResponseWriter, r *http.Request) {
 	nombre := r.FormValue("nombre")
 	if nombre == "" {
 		http.Error(w, "El nombre es obligatorio", http.StatusBadRequest)
+		return
+	}
+
+	deporteInput := logic.Deporte{
+		Nombre: r.FormValue("nombre"),
+	}
+	// Validar usando la capa /logic
+	if err := logic.ValidateDeporte(&deporteInput); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
