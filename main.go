@@ -38,15 +38,19 @@ func main() {
 
 	usuarioHandler := handlers.NewUserHandler(queries)
 	deportesHandler := handlers.NewDeporteHandler(queries)
+	prediosHandler := handlers.NewPredioHandler(queries)
 
 	// Usuarios
 	http.Handle("/usuarios", usuarioHandler)
 	http.Handle("/usuarios/", usuarioHandler)
+
 	// Deportes
 	http.Handle("/deportes", deportesHandler)
 	http.Handle("/deportes/", deportesHandler)
-	
-	
+
+	//Predios
+	http.Handle("/predios", prediosHandler)
+	http.Handle("/predios/", prediosHandler)
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
