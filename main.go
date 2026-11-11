@@ -54,8 +54,10 @@ func main() {
 	http.HandleFunc("/deportes", deporteHandler.Create)
 
 	//Predios
-	http.Handle("/predios", prediosHandler)
-	http.Handle("/predios/", prediosHandler)
+	// Ruta principal GET / para listar y mostrar el formulario
+	http.HandleFunc("/", prediosHandler.Create)
+	// Ruta POST /deporte para recibir el envio del formulario
+	http.HandleFunc("/predios", prediosHandler.Create)
 
 	log.Println("Servidor escuchando en http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
