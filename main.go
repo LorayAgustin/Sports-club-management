@@ -36,28 +36,27 @@ func main() {
 
 	queries := sqlc.New(db)
 
-	usuarioHandler := handlers.NewUserHandler(queries)
+	// Instanciación de Handlers
+	homeHandler := handlers.NewHomeHandler()
+	//usuarioHandler := handlers.NewUserHandler(queries)
 	deporteHandler := handlers.NewDeporteHandler(queries)
 	prediosHandler := handlers.NewPredioHandler(queries)
 
+	// Archivos estaticos
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	// Rutas de la aplicación
+	http.HandleFunc("/", homeHandler.Index)
+
 	// Usuarios
-	http.Handle("/usuarios", usuarioHandler)
-	http.Handle("/usuarios/", usuarioHandler)
+	//http.HandleFunc("/usuarios", usuarioHandler.Handle)
 
 	// Deportes
-	// Ruta principal GET / para listar y mostrar el formulario
-	http.HandleFunc("/", deporteHandler.Index)
-	// Ruta POST /deportes para recibir el envío del formulario
-	http.HandleFunc("/deportes", deporteHandler.Create)
+	http.HandleFunc("/deportes", deporteHandler.Handle)
 
 	//Predios
-	// Ruta principal GET / para listar y mostrar el formulario
-	http.HandleFunc("/", prediosHandler.Create)
-	// Ruta POST /deporte para recibir el envio del formulario
-	http.HandleFunc("/predios", prediosHandler.Create)
+	http.HandleFunc("/predios", prediosHandler.Handle)
 
 	log.Println("Servidor escuchando en http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

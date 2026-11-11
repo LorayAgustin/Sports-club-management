@@ -18,7 +18,7 @@ templ PredioContent(title string, predios []sqlc.Predio) {
 			<h2>{ title }</h2>
 			@PredioForm()
 			<hr/>
-			@PredioList(predios)
+			@PrediosList(predios)
 		</section>
 	</main>
 }
