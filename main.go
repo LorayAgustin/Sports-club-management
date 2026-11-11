@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
 
 	// 1. Leer la cadena de conexión desde la variable de entorno DB_URL (Docker)
 	connStr := os.Getenv("DB_URL")
@@ -22,13 +21,13 @@ func main() {
 		// Fallback para ejecución local fuera de Docker
 		connStr = "postgres://admin_tpEspecial:admin_contra@localhost:5432/tpEspecial_db?sslmode=disable"
 	}
-
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatalf("Fallo de conexión a la DB: %v", err)
 	}
 	defer db.Close()
 
+	ctx := context.Background()
 	if err := db.PingContext(ctx); err != nil {
 		log.Fatalf("Fallo de ping a la DB: %v", err)
 	}
@@ -36,9 +35,21 @@ func main() {
 	log.Println("Conexión exitosa a la base de datos")
 
 	queries := sqlc.New(db)
-	usuarioHandler := handlers.NewUserHandler(queries)
 
+	usuarioHandler := handlers.NewUserHandler(queries)
+	deportesHandler := handlers.NewDeporteHandler(queries)
+
+	// Usuarios
+	http.Handle("/usuarios", usuarioHandler)
 	http.Handle("/usuarios/", usuarioHandler)
+	// Deportes
+	http.Handle("/deportes", deportesHandler)
+	http.Handle("/deportes/", deportesHandler)
+	
+	
+
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/", fs)
 
 	log.Println("Servidor escuchando en http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
