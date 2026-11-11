@@ -1,204 +1,98 @@
 package handlers
 
 import (
-	"database/sql"
-	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
+	"time"
 
 	sqlc "cl_gst/db/sqlc"
 	"cl_gst/logic"
+	"cl_gst/views"
 )
 
-type UserHandler struct {
+type UsuarioHandler struct {
 	queries *sqlc.Queries
 }
 
-func NewUserHandler(queries *sqlc.Queries) *UserHandler {
-	return &UserHandler{queries: queries}
+func NewUsuarioHandler(queries *sqlc.Queries) *UsuarioHandler {
+	return &UsuarioHandler{queries: queries}
 }
 
-func (h *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/usuarios")
-	path = strings.Trim(path, "/")
-
-	if path == "" {
-		switch r.Method {
-		case http.MethodGet:
-			h.ListUsers(w, r)
-		case http.MethodPost:
-			h.CreateUser(w, r)
-		default:
-			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		}
+// GET /usuarios: Consulta la base de datos y renderiza la vista
+func (h *UsuarioHandler) Index(w http.ResponseWriter, r *http.Request) {
+	// Validar que la ruta sea exactamente "/" o "/usuarios"
+	if r.URL.Path != "/" && r.URL.Path != "/usuarios" {
+		http.NotFound(w, r)
 		return
 	}
 
-	id, err := strconv.Atoi(path)
+	usuarios, err := h.queries.ListUsuarios(r.Context())
 	if err != nil {
-		http.Error(w, "ID de usuario inválido", http.StatusBadRequest)
+		log.Printf("Error al obtener usuarios: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
 		return
 	}
 
-	switch r.Method {
-	case http.MethodGet:
-		h.GetUserById(w, r, int32(id))
-	case http.MethodPut:
-		h.UpdateUser(w, r, int32(id))
-	case http.MethodDelete:
-		h.DeleteUser(w, r, int32(id))
-	default:
+	if err := views.IndexPage("Gestión del Club - Usuarios", usuarios).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar plantilla: %v", err)
+		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
+	}
+}
+
+// POST /usuarios: Procesa los datos del formulario, valida e inserta un nuevo usuario
+func (h *UsuarioHandler) Create(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
 	}
-}
 
-// GET /usuarios
-func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := h.queries.ListUsuarios(r.Context())
+	// Leer los datos enviados por el <form action="/usuarios" method="POST">
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+		return
+	}
+
+	// Obtener y parsear la fecha de nacimiento
+	fechaStr := r.FormValue("fechaNacimiento")
+	if fechaStr == "" {
+		http.Error(w, "La fecha de nacimiento es obligatoria", http.StatusBadRequest)
+		return
+	}
+
+	fechaNac, err := time.Parse("2006-01-02", fechaStr)
 	if err != nil {
-		http.Error(w, "Error al obtener la lista de usuarios", http.StatusInternalServerError)
+		http.Error(w, "Formato de fecha inválido", http.StatusBadRequest)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
-}
-
-// POST /usuarios
-func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	// 1. Verificación de seguridad
-	if h.queries == nil {
-		http.Error(w, "Error interno: consultas no inicializado", http.StatusInternalServerError)
-		return
+	userInput := logic.Usuario{
+		Nombre:          r.FormValue("nombre"),
+		Email:           r.FormValue("email"),
+		Contrasena:      r.FormValue("contrasena"),
+		FechaNacimiento: fechaNac,
+		Rol:             r.FormValue("rol"),
 	}
 
-	// 2. Decodificación del JSON de entrada
-	var createUsuario logic.Usuario
-	if err := json.NewDecoder(r.Body).Decode(&createUsuario); err != nil {
-		http.Error(w, "Formato JSON inválido: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// 3. Validación de datos de negocio (incluyendo consulta a la DB si aplica)
-	if err := logic.ValidateUsuario(r.Context(), createUsuario, h.queries); err != nil {
-		http.Error(w, "Validación de usuario fallida: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// 4. Inserción en la base de datos con sqlc
-	user, err := h.queries.CreateUsuario(r.Context(), sqlc.CreateUsuarioParams{
-		Nombre:          createUsuario.Nombre,
-		Email:           createUsuario.Email,
-		Contrasena:      createUsuario.Contrasena,
-		Fechanacimiento: createUsuario.FechaNacimiento,
-		Rol:             createUsuario.Rol,
-	})
-	if err != nil {
-		log.Printf("Error en CreateUsuario (DB): %v", err) // Imprescindible para ver errores en docker logs
-		http.Error(w, "Error al crear el usuario en la base de datos", http.StatusInternalServerError)
-		return
-	}
-
-	// 5. Respuesta HTTP 201 Created
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
-}
-
-// GET /usuarios/{id}
-func (h *UserHandler) GetUserById(w http.ResponseWriter, r *http.Request, id int32) {
-	user, err := h.queries.GetUsuario(r.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: Usuario no encontrado
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-			return
-		}
-		// Error 500: Error interno del servidor
-		http.Error(w, "Error al obtener el usuario", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
-}
-
-// PUT /usuarios/{id}
-func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request, id int32) {
-	// 1. Obtener el usuario existente en PostgreSQL
-	usuarioActual, err := h.queries.GetUsuario(r.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-			return
-		}
-		http.Error(w, "Error al verificar el usuario en la base de datos", http.StatusInternalServerError)
-		return
-	}
-
-	// 2. Decodificar el JSON de entrada
-	var updatedUsuario logic.Usuario
-	if err := json.NewDecoder(r.Body).Decode(&updatedUsuario); err != nil {
-		http.Error(w, "Formato JSON inválido: ", http.StatusBadRequest)
-		return
-	}
-
-	// 3. Evaluar si debemos verificar duplicado de nombre en la DB:
-	// Si el nombre no cambió respecto al que tenía, pasamos 'nil' para saltear ExistsUserByName
-	var dbVal logic.UserDB = h.queries
-	if updatedUsuario.Nombre == usuarioActual.Nombre {
-		dbVal = nil
-	}
-
-	// 4. Validar los datos recibidos
-	if err := logic.ValidateUsuario(r.Context(), updatedUsuario, dbVal); err != nil {
+	// Validar con las reglas de negocio de la capa /logic
+	if err := logic.ValidateUsuario(r.Context(), userInput, h.queries); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// 5. Actualizar en la base de datos
-	err = h.queries.UpdateUsuario(r.Context(), sqlc.UpdateUsuarioParams{
-		ID:              id,
-		Nombre:          updatedUsuario.Nombre,
-		Email:           updatedUsuario.Email,
-		Contrasena:      updatedUsuario.Contrasena,
-		Fechanacimiento: updatedUsuario.FechaNacimiento,
-		Rol:             updatedUsuario.Rol,
+	// 4. Guardar en PostgreSQL usando la consulta generada por sqlc
+	_, err = h.queries.CreateUsuario(r.Context(), sqlc.CreateUsuarioParams{
+		Nombre:          userInput.Nombre,
+		Email:           userInput.Email,
+		Contrasena:      userInput.Contrasena,
+		Fechanacimiento: userInput.FechaNacimiento,
+		Rol:             userInput.Rol,
 	})
 	if err != nil {
-		http.Error(w, "Error al actualizar el usuario", http.StatusInternalServerError)
+		log.Printf("Error al crear usuario: %v", err)
+		http.Error(w, "Error al guardar en la base de datos", http.StatusInternalServerError)
 		return
 	}
 
-	// 6. Responder 200 OK
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(updatedUsuario)
-}
-
-// DELETE /usuarios/{id}
-func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request, id int32) {
-	_, err := h.queries.GetUsuario(r.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: Usuario no encontrado
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-			return
-		}
-		// Error 500: Error interno del servidor
-		http.Error(w, "Error al obtener el usuario", http.StatusInternalServerError)
-		return
-	}
-
-	if err := h.queries.DeleteUsuario(r.Context(), id); err != nil {
-		// Error 500: Error interno del servidor
-		http.Error(w, "Error al eliminar el usuario", http.StatusInternalServerError)
-		return
-	}
-
-	// Estado 204: Usuario eliminado exitosamente
-	w.WriteHeader(http.StatusNoContent)
+	// 5. Redirección PRG (Post/Redirect/Get) para evitar reenvíos al refrescar (F5)
+	http.Redirect(w, r, "/usuarios", http.StatusSeeOther)
 }
