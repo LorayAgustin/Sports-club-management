@@ -72,5 +72,5 @@ func (h *DeporteHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirección PRG a la página principal
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/deportes", http.StatusSeeOther)
 }
