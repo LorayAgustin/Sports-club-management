@@ -36,28 +36,42 @@ func main() {
 
 	queries := sqlc.New(db)
 
-	usuarioHandler := handlers.NewUserHandler(queries)
+	// Instanciación de Handlers
+	homeHandler := handlers.NewHomeHandler()
+	//usuarioHandler := handlers.NewUserHandler(queries)
 	deporteHandler := handlers.NewDeporteHandler(queries)
 	prediosHandler := handlers.NewPredioHandler(queries)
+	categoriasHandler := handlers.NewCategoriaHandler(queries)
 
+	// Archivos estaticos
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	// Rutas de la aplicación
+	http.HandleFunc("/", homeHandler.Index)
+
 	// Usuarios
-	http.Handle("/usuarios", usuarioHandler)
-	http.Handle("/usuarios/", usuarioHandler)
+	//http.HandleFunc("/usuarios", usuarioHandler.Handle)
 
 	// Deportes
-	// Ruta principal GET / para listar y mostrar el formulario
-	http.HandleFunc("/", deporteHandler.Index)
-	// Ruta POST /deportes para recibir el envío del formulario
-	http.HandleFunc("/deportes", deporteHandler.Create)
+	http.HandleFunc("/deportes", deporteHandler.Handle)
 
-	//Predios
+<<<<<<< HEAD
+	// Predios
 	// Ruta principal GET / para listar y mostrar el formulario
-	http.HandleFunc("/", prediosHandler.Create)
+	http.HandleFunc("/", prediosHandler.Index)
 	// Ruta POST /deporte para recibir el envio del formulario
 	http.HandleFunc("/predios", prediosHandler.Create)
+=======
+	//Predios
+	http.HandleFunc("/predios", prediosHandler.Handle)
+>>>>>>> 6d1afa130c2e32d6d58caadc4417fb23897369fa
+
+	// Categorias
+	// Ruta principal GET / para listar y mostrar el formulario
+	http.HandleFunc("/", categoriasHandler.Index)
+	// Ruta POST /deporte para recibir el envio del formulario
+	http.HandleFunc("/categorias", categoriasHandler.Create)
 
 	log.Println("Servidor escuchando en http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
