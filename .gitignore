@@ -33,3 +33,6 @@ postgres_data/
 
 # Archivos creados por el generate sqlc
 db/sqlc/
+
+# Archivos creados por template generate
+*_templ.go
