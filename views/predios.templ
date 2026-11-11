@@ -1,0 +1,24 @@
+package views
+
+import (
+	sqlc "cl_gst/db/sqlc"
+)
+
+// IndexPage recibe el título, el listado de deportes
+templ PrediosPage(title string, predios []sqlc.Predio) {
+	@Layout(title, PredioContent(title, predios))
+}
+
+templ PredioContent(title string, predios []sqlc.Predio) {
+	<header class="header-principal">
+		<h1>Gestión del Club Deportivo</h1>
+	</header>
+	<main class="contenedor-principal">
+		<section class="tarjeta-seccion">
+			<h2>{ title }</h2>
+			@PredioForm()
+			<hr/>
+			@PredioList(predios)
+		</section>
+	</main>
+}

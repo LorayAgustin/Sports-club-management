@@ -1,0 +1,24 @@
+package views
+
+import (
+	sqlc "cl_gst/db/sqlc"
+)
+
+// IndexPage recibe el título, el listado de deportes
+templ DeportesPage(title string, deportes []sqlc.Deporte) {
+	@Layout(title, DeporteContent(title, deportes))
+}
+
+templ DeporteContent(title string, deportes []sqlc.Deporte) {
+	<header class="header-principal">
+		<h1>Gestión del Club Deportivo</h1>
+	</header>
+	<main class="contenedor-principal">
+		<section class="tarjeta-seccion">
+			<h2>{ title }</h2>
+			@DeporteForm()
+			<hr/>
+			@DeportesList(deportes)
+		</section>
+	</main>
+}
