@@ -15,7 +15,7 @@ import (
 
 func main() {
 
-	// 1. Leer la cadena de conexión desde la variable de entorno DB_URL (Docker)
+	// Leer la cadena de conexión desde la variable de entorno DB_URL (Docker)
 	connStr := os.Getenv("DB_URL")
 	if connStr == "" {
 		// Fallback para ejecución local fuera de Docker
@@ -37,24 +37,28 @@ func main() {
 	queries := sqlc.New(db)
 
 	usuarioHandler := handlers.NewUserHandler(queries)
-	deportesHandler := handlers.NewDeporteHandler(queries)
+	deporteHandler := handlers.NewDeporteHandler(queries)
 	prediosHandler := handlers.NewPredioHandler(queries)
+
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	// Usuarios
 	http.Handle("/usuarios", usuarioHandler)
 	http.Handle("/usuarios/", usuarioHandler)
 
 	// Deportes
-	http.Handle("/deportes", deportesHandler)
-	http.Handle("/deportes/", deportesHandler)
+	// Ruta principal GET / para listar y mostrar el formulario
+	http.HandleFunc("/", deporteHandler.Index)
+	// Ruta POST /deportes para recibir el envío del formulario
+	http.HandleFunc("/deportes", deporteHandler.Create)
 
 	//Predios
 	http.Handle("/predios", prediosHandler)
 	http.Handle("/predios/", prediosHandler)
 
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fs)
-
 	log.Println("Servidor escuchando en http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatalf("Error al iniciar el servidor: %v", err)
+	}
 }

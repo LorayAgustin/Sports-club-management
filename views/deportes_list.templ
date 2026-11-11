@@ -1,0 +1,33 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// DeportesList renderiza el listado de disciplinas deportivas
+templ DeportesList(deportes []sqlc.Deporte) {
+	<div id="deportes-list-container">
+		<h2>Disciplinas Deportivas</h2>
+		if len(deportes) == 0 {
+			<p>No hay deportes registrados en el club actualmente.</p>
+		} else {
+			<table class="tabla-deportes">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Nombre</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, d := range deportes {
+						<tr>
+							<td>{ fmt.Sprintf("%d", d.IDDeporte) }</td>
+							<td>{ d.Nombre }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}

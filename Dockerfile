@@ -1,5 +1,5 @@
 # 1. Imagen base oficial de Go sobre Alpine Linux (liviana y eficiente) 
-FROM golang:1.25-alpine 
+FROM golang:1.26-alpine 
 
 # 2. Directorio de trabajo interno dentro del contenedor 
 WORKDIR /app 

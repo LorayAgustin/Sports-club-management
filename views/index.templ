@@ -5,27 +5,20 @@ import (
 )
 
 // IndexPage recibe el título, el listado de deportes y el listado de predios
-templ IndexPage(title string, deportes []sqlc.Deporte, predios []sqlc.Predio) {
-	@Layout(title, indexContent(deportes, predios))
+templ IndexPage(title string, deportes []sqlc.Deporte) {
+	@Layout(title, indexContent(title, deportes))
 }
 
-templ indexContent(deportes []sqlc.Deporte, predios []sqlc.Predio) {
+templ indexContent(title string, deportes []sqlc.Deporte) {
 	<header class="header-principal">
 		<h1>Gestión del Club Deportivo</h1>
 	</header>
 	<main class="contenedor-principal">
 		<section class="tarjeta-seccion">
-			<h2>Gestión de Deportes</h2>
+			<h2>{ title }</h2>
 			@DeporteForm()
 			<hr/>
 			@DeportesList(deportes)
-		</section>
-
-		<section class="tarjeta-seccion">
-			<h2>Gestión de Predios</h2>
-			@PredioForm()
-			<hr/>
-			@PrediosList(predios)
 		</section>
 	</main>
 }
