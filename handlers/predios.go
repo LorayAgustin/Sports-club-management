@@ -63,7 +63,7 @@ func (h *PredioHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validar usando la capa /logic
-	if err := logic.ValidatePredio(&predioInput); err != nil {
+	if err := logic.ValidatePredio(predioInput); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
