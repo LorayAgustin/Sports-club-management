@@ -11,13 +11,23 @@ templ PrediosPage(title string, predios []sqlc.Predio) {
 
 templ PredioContent(title string, predios []sqlc.Predio) {
 	<header class="header-principal">
-		<h1>Gestión del Club Deportivo</h1>
+		<div class="header-contenido">
+			<div>
+				<h1>Gestión del Club Deportivo</h1>
+				<p class="subtitulo-header">Administración de sedes, canchas e instalaciones del club</p>
+			</div>
+			<a href="/" class="btn-volver">← Volver al Menú Principal</a>
+		</div>
 	</header>
-	<main class="contenedor-principal">
+
+	<main class="layout-abm">
+		<!-- Tarjeta 1: Formulario de Alta -->
 		<section class="tarjeta-seccion">
-			<h2>{ title }</h2>
 			@PredioForm()
-			<hr/>
+		</section>
+
+		<!-- Tarjeta 2: Listado de Predios -->
+		<section class="tarjeta-seccion">
 			@PrediosList(predios)
 		</section>
 	</main>

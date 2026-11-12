@@ -7,29 +7,49 @@ import (
 
 // PrediosList renderiza el listado de predios del club
 templ PrediosList(predios []sqlc.Predio) {
-	<div id="predios-list-container">
-		<h2>Predios del Club</h2>
+	<div id="predios-list-container" class="listado-container">
+		<div class="listado-header">
+			<h2>Predios del Club</h2>
+			<span class="badge-contador">{ fmt.Sprintf("%d registrados", len(predios)) }</span>
+		</div>
+
 		if len(predios) == 0 {
-			<p>No hay predios registrados en el club actualmente.</p>
+			<div class="empty-state">
+				<div class="empty-icon">🏟️</div>
+				<h3>No hay predios registrados</h3>
+				<p>Completá el formulario de la izquierda para dar de alta la primera sede.</p>
+			</div>
 		} else {
-			<table class="tabla-predios">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Nombre</th>
-						<th>Dirección</th>
-					</tr>
-				</thead>
-				<tbody>
-					for _, p := range predios {
+			<div class="tabla-responsive">
+				<table class="tabla-custom">
+					<thead>
 						<tr>
-							<td>{ fmt.Sprintf("%d", p.IDPredio) }</td>
-							<td>{ p.Nombre }</td>
-							<td>{ p.Direccion }</td>
+							<th>ID</th>
+							<th>Nombre</th>
+							<th>Dirección</th>
+							<th class="texto-derecha">Acciones</th>
 						</tr>
-					}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						for _, p := range predios {
+							<tr>
+								<td><span class="id-tag">#{ fmt.Sprintf("%d", p.IDPredio) }</span></td>
+								<td class="col-destacada">
+									<span class="icono-tabla">🏟️</span> { p.Nombre }
+								</td>
+								<td class="col-secundaria">{ p.Direccion }</td>
+								<td class="col-acciones texto-derecha">
+									<form action={ templ.SafeURL(fmt.Sprintf("/predios/eliminar?id=%d", p.IDPredio)) } method="POST" class="form-inline">
+										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar este predio?');">
+											Eliminar
+										</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 		}
 	</div>
 }
