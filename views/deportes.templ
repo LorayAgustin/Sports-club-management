@@ -4,7 +4,7 @@ import (
 	sqlc "cl_gst/db/sqlc"
 )
 
-// IndexPage recibe el título, el listado de deportes
+// Deportes recibe el título, el listado de deportes
 templ DeportesPage(title string, deportes []sqlc.Deporte) {
 	@Layout(title, DeporteContent(title, deportes))
 }

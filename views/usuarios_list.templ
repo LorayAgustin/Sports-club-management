@@ -1,0 +1,39 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// UsuariosList renderiza el listado de usuarios del club
+templ UsuariosList(usuarios []sqlc.Usuario) {
+	<div id="usuarios-list-container">
+		<h2>Usuarios Registrados</h2>
+		if len(usuarios) == 0 {
+			<p>No hay usuarios registrados en el club actualmente.</p>
+		} else {
+			<table class="tabla-usuarios">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Nombre</th>
+						<th>Email</th>
+						<th>Fecha de Nacimiento</th>
+						<th>Rol</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, u := range usuarios {
+						<tr>
+							<td>{ fmt.Sprintf("%d", u.ID) }</td>
+							<td>{ u.Nombre }</td>
+							<td>{ u.Email }</td>
+							<td>{ u.Fechanacimiento.Format("02/01/2006") }</td>
+							<td>{ u.Rol }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}

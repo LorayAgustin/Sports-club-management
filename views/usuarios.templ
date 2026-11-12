@@ -1,0 +1,24 @@
+package views
+
+import (
+	sqlc "cl_gst/db/sqlc"
+)
+
+// Usuarios recibe el título y el listado de usuarios
+templ UsuariosPage(title string, usuarios []sqlc.Usuario) {
+	@Layout(title, UsuarioContent(title, usuarios))
+}
+
+templ UsuarioContent(title string, usuarios []sqlc.Usuario) {
+	<header class="header-principal">
+		<h1>Gestión del Club Deportivo</h1>
+	</header>
+	<main class="contenedor-principal">
+		<section class="tarjeta-seccion">
+			<h2>{ title }</h2>
+			@UsuarioForm()
+			<hr/>
+			@UsuariosList(usuarios)
+		</section>
+	</main>
+}
