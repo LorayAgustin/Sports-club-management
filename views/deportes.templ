@@ -4,7 +4,7 @@ import (
 	sqlc "cl_gst/db/sqlc"
 )
 
-// IndexPage recibe el título, el listado de deportes
+// Deportes recibe el título, el listado de deportes
 templ DeportesPage(title string, deportes []sqlc.Deporte) {
 	@Layout(title, DeporteContent(title, deportes))
 }
@@ -12,13 +12,22 @@ templ DeportesPage(title string, deportes []sqlc.Deporte) {
 templ DeporteContent(title string, deportes []sqlc.Deporte) {
 	<header class="header-principal">
 		<h1>Gestión del Club Deportivo</h1>
+		<h2>{ title }</h2>
+		<!-- Botón para volver al menú principal -->
+		<a href="/" class="btn-volver">← Volver al Menú Principal</a>
 	</header>
+	
 	<main class="contenedor-principal">
+		
+		<!-- Bloque separado 1: Formulario para añadir -->
 		<section class="tarjeta-seccion">
-			<h2>{ title }</h2>
 			@DeporteForm()
-			<hr/>
+		</section>
+
+		<!-- Bloque separado 2: Lista de deportes -->
+		<section class="tarjeta-seccion">
 			@DeportesList(deportes)
 		</section>
+		
 	</main>
 }

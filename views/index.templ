@@ -8,18 +8,70 @@ templ IndexPage(title string) {
 templ indexContent(title string) {
 	<header class="header-principal">
 		<h1>Gestión del Club Deportivo</h1>
+		<p class="subtitulo-header">Panel de control general</p>
 	</header>
-	<main class="contenedor-principal">
-		<section class="tarjeta-seccion">
-			<h2>Panel de Administración</h2>
-			<p>Seleccioná la sección que desees gestionar:</p>
-			<div class="menu-navegacion">
-				<a href="/deportes" class="btn-navegacion">⚽ Gestión de Deportes</a>
-				<a href="/predios" class="btn-navegacion">🏟️ Gestión de Predios</a>
-				<a href="/usuarios" class="btn-navegacion">👤 Gestión de Usuarios</a>
-				<a href="/categorias" class="btn-navegacion">🏆 Gestión de Categorías</a>
-				<a href="/socios" class="btn-navegacion">🪪 Gestión de Socios</a>
-			</div>
+	<main class="contenedor-principal home-contenedor">
+		<section class="tarjeta-seccion tarjeta-home">
+			<h2>Menú de Navegación</h2>
+			<p class="descripcion-seccion">Seleccioná la sección que desees administrar:</p>
+			
+			<nav class="menu-columna">
+				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/usuarios'">
+					<div class="card-icono">👤</div>
+					<div class="card-info">
+						<span class="card-titulo">Gestión de Usuarios</span>
+					</div>
+					<span class="card-flecha">→</span>
+				</button>
+
+				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/socios'">
+					<div class="card-icono">🪪</div>
+					<div class="card-info">
+						<span class="card-titulo">Gestión de Socios</span>
+					</div>
+					<span class="card-flecha">→</span>
+				</button>
+
+				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/deportes'">
+					<div class="card-icono">⚽</div>
+					<div class="card-info">
+						<span class="card-titulo">Gestión de Deportes</span>
+					</div>
+					<span class="card-flecha">→</span>
+				</button>
+
+				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/predios'">
+					<div class="card-icono">🏟️</div>
+					<div class="card-info">
+						<span class="card-titulo">Gestión de Predios</span>
+					</div>
+					<span class="card-flecha">→</span>
+				</button>
+
+				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/practicas'">
+					<div class="card-icono">📋</div>
+					<div class="card-info">
+						<span class="card-titulo">Gestión de Prácticas</span>
+					</div>
+					<span class="card-flecha">→</span>
+				</button>
+
+				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/categorias'">
+					<div class="card-icono">🏆</div>
+					<div class="card-info">
+						<span class="card-titulo">Gestión de Categorías</span>
+					</div>
+					<span class="card-flecha">→</span>
+				</button>
+
+				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/inscripciones'">
+					<div class="card-icono">📝</div>
+					<div class="card-info">
+						<span class="card-titulo">Gestión de Inscripciones</span>
+					</div>
+					<span class="card-flecha">→</span>
+				</button>
+			</nav>
 		</section>
 	</main>
 }

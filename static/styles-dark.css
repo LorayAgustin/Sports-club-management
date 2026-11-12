@@ -1,136 +1,223 @@
 /* ==========================================
-   DISEÑO MODO OSCURO (styles-dark.css)
+   LISTA DE DEPORTES (DISEÑO EN TARJETAS FLEX)
    ========================================== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+.separador-seccion {
+  border: 0;
+  height: 1px;
+  background-color: #334155;
+  margin: 30px 0;
 }
 
-body {
+.titulo-lista {
+  margin-bottom: 20px;
+}
+
+.mensaje-vacio {
+  color: #94a3b8;
+  font-style: italic;
+  padding: 15px 0;
+}
+
+/* Contenedor principal de la lista */
+.grid-deportes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Separación entre cada cuadrado/fila */
+}
+
+/* El "cuadrado" de cada fila */
+.tarjeta-deporte-row {
+  display: flex;
   background-color: #0f172a;
-  color: #f8fafc;
-  padding: 30px 20px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  overflow: hidden; /* Para que el fondo de la columna ID respete los bordes curvos */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.header-principal {
-  text-align: center;
-  margin-bottom: 35px;
+.tarjeta-deporte-row:hover {
+  border-color: #38bdf8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.3);
 }
 
-.header-principal h1 {
-  color: #38bdf8;
-  font-size: 2.2rem;
-  letter-spacing: -0.5px;
+/* Estilos compartidos para las columnas */
+.col-seccion {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  justify-content: center;
+}
+
+/* Columna específica para el ID */
+.id-seccion {
+  background-color: rgba(51, 65, 85, 0.3); /* Fondo ligeramente distinto para separar visualmente */
+  border-right: 1px solid #334155; /* Línea divisoria */
+  align-items: center;
+  min-width: 100px;
+}
+
+/* Columna específica para el Nombre */
+.nombre-seccion {
+  flex-grow: 1; /* Ocupa todo el ancho restante */
+  align-items: flex-start;
+}
+
+/* Textos pequeños indicadores (id / nombre) */
+.etiqueta {
+  font-size: 0.75rem;
+  color: #94a3b8;
   text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
+
+/* Valores de los textos */
+.valor-id {
+  color: #38bdf8; /* Resalta en celeste */
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.valor-nombre {
+  color: #f8fafc;
+  font-weight: 500;
+  font-size: 1.15rem;
+}
+
+.btn-volver {
+    display: inline-block;
+    margin-top: 10px;
+    color: #38bdf8;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.btn-volver:hover {
+    color: #f8fafc;
+    text-decoration: underline;
+}
+
+/* ==========================================
+   1. CONTENEDORES Y TARJETAS
+   ========================================== */
 
 .contenedor-principal {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 30px;
-  max-width: 1000px;
-  margin: 0 auto;
+    display: grid;
+    /* Genera 2 columnas automáticas si hay más de 350px por tarjeta */
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: start;
 }
 
+/* Para el caso de tarjeta única centrada */
+.contenedor-unica-tarjeta {
+    display: flex;
+    justify-content: center;
+}
+
+/* Tarjeta contenedora */
 .tarjeta-seccion {
-  background-color: #1e293b;
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
-  border: 1px solid #334155;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.tarjeta-flex-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 700px;
 }
 
 .tarjeta-seccion h2 {
-  color: #818cf8;
-  font-size: 1.25rem;
-  margin-bottom: 22px;
-  border-bottom: 1px solid #334155;
-  padding-bottom: 10px;
+    color: #2b6cb0;
+    font-size: 1.35rem;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 8px;
 }
 
+/* Botón para regresar al menú */
+.btn-volver {
+    display: inline-block;
+    margin-top: 10px;
+    color: #3182ce;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.btn-volver:hover {
+    color: #1a365d;
+    text-decoration: underline;
+}
+
+/* Separador elegante para la opción de 1 sola tarjeta */
+.separador-seccion {
+    border: 0;
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 15px 0;
+}
+
+
+/* ========================================== 
+   2. MEJORAS EN FORMULARIO Y LISTA 
+   ========================================== */
+
 .form-flex {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .form-flex label {
-  font-weight: 500;
-  font-size: 0.9rem;
-  color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #4a5568;
 }
 
 .form-flex input {
-  padding: 12px 16px;
-  background-color: #0f172a;
-  border: 1px solid #475569;
-  border-radius: 8px;
-  font-size: 1rem;
-  color: #f8fafc;
-  transition: all 0.2s ease;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-flex input:focus {
-  outline: none;
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
 }
 
-.btn-primario {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: #ffffff;
-  padding: 13px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.1s ease;
-}
-
-.btn-primario:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
+/* Listado de disciplinas en tarjetas o filas despegadas */
 .lista-flex {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .lista-flex li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #0f172a;
-  padding: 14px 18px;
-  border-radius: 8px;
-  border: 1px solid #334155;
-  border-left: 4px solid #38bdf8;
-}
-
-.lista-flex li span {
-  font-size: 0.98rem;
-  color: #e2e8f0;
-}
-
-.btn-eliminar {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-eliminar:hover {
-  background-color: #ef4444;
-  color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8fafc;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 4px solid #3182ce;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }

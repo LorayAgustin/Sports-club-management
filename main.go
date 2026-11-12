@@ -38,7 +38,7 @@ func main() {
 
 	// Instanciación de Handlers
 	homeHandler := handlers.NewHomeHandler()
-	//usuarioHandler := handlers.NewUserHandler(queries)
+	usuarioHandler := handlers.NewUsuarioHandler(queries)
 	deporteHandler := handlers.NewDeporteHandler(queries)
 	prediosHandler := handlers.NewPredioHandler(queries)
 	categoriasHandler := handlers.NewCategoriaHandler(queries)
@@ -53,7 +53,7 @@ func main() {
 	http.HandleFunc("/", homeHandler.Index)
 
 	// Usuarios
-	//http.HandleFunc("/usuarios", usuarioHandler.Handle)
+	http.HandleFunc("/usuarios", usuarioHandler.Handle)
 
 	// Deportes
 	http.HandleFunc("/deportes", deporteHandler.Handle)
