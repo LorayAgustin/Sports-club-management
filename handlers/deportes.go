@@ -31,7 +31,7 @@ func (h *DeporteHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 // GET /: Muestra la página con el formulario y la tabla de deportes
 func (h *DeporteHandler) Index(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" && r.URL.Path != "/deportes" {
+	if r.URL.Path != "/deportes" && r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}

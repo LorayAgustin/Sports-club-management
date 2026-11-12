@@ -43,6 +43,9 @@ func main() {
 	prediosHandler := handlers.NewPredioHandler(queries)
 	//categoriasHandler := handlers.NewCategoriaHandler(queries)
 	sociosHandler := handlers.NewSocioHandler(queries)
+	categoriasHandler := handlers.NewCategoriaHandler(queries)
+	inscripcionesHandler := handlers.NewInscripcionHandler(queries)
+	practicasHandler := handlers.NewPracticaHandler(queries)
 
 	// Archivos estaticos
 	fs := http.FileServer(http.Dir("static"))
@@ -64,10 +67,12 @@ func main() {
 	http.HandleFunc("/predios", prediosHandler.Handle)
 
 	// Categorias
-	// Ruta principal GET / para listar y mostrar el formulario
-	//http.HandleFunc("/", categoriasHandler.Index)
-	// Ruta POST /deporte para recibir el envio del formulario
-	//http.HandleFunc("/categorias", categoriasHandler.Create)
+	http.HandleFunc("/categorias", categoriasHandler.Handle)
+
+	// Inscripciones
+	http.HandleFunc("/inscripciones", inscripcionesHandler.Handle)
+	// Practicas
+	http.HandleFunc("/practicas", practicasHandler.Handle)
 
 	log.Println("Servidor escuchando en http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

@@ -1,143 +1,41 @@
-/* ==========================================
-   1. ESTILOS GENERALES Y RESET BÁSICO
-   ========================================== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* --- TEMA MODO OSCURO --- */
+.btn-card-navegacion {
+    display: flex; align-items: center; gap: 20px; width: 100%;
+    background-color: #1e293b; /* Fondo slate oscuro */
+    border: 1px solid #334155; /* Borde sutil */
+    border-radius: 12px; padding: 20px 24px;
+    font-family: inherit; text-align: left; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
 }
 
-body {
-  background-color: #f4f6f8;
-  color: #333;
-  padding: 20px;
+.card-icono {
+    font-size: 2rem;
+    background-color: #0f172a; /* Fondo ícono casi negro */
+    color: #94a3b8;
+    width: 60px; height: 60px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.3s ease;
 }
 
-.header-principal {
-  text-align: center;
-  margin-bottom: 30px;
+.card-titulo {
+    color: #f8fafc; /* Texto casi blanco */
+    font-weight: 700; font-size: 1.25rem;
+    transition: color 0.3s ease;
 }
 
-.header-principal h1 {
-  color: #1a365d;
-  font-size: 2rem;
+.card-flecha {
+    color: #475569; font-size: 1.5rem; font-weight: bold;
+    transition: all 0.2s ease;
 }
 
-/* ==========================================
-   2. LAYOUT PRINCIPAL CON CSS GRID
-   ========================================== */
-.contenedor-principal {
-  display: grid;
-  /* En pantallas grandes genera 2 columnas flexibles de igual proporción (1fr) */
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 25px;
-  max-width: 1000px;
-  margin: 0 auto;
+/* Efecto Hover: Verde Esmeralda neón */
+.btn-card-navegacion:hover {
+    border-color: #10b981; /* Verde esmeralda */
+    background-color: #0f172a;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
 }
-
-/* Estilo de tarjeta para las secciones */
-.tarjeta-seccion {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-}
-
-.tarjeta-seccion h2 {
-  color: #2b6cb0;
-  font-size: 1.3rem;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #edf2f7;
-  padding-bottom: 8px;
-}
-
-/* ==========================================
-   3. FORMULARIO CON FLEXBOX
-   ========================================== */
-.form-flex {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-flex label {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #4a5568;
-}
-
-.form-flex input {
-  padding: 12px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.2s ease;
-}
-
-.form-flex input:focus {
-  outline: none;
-  border-color: #3182ce;
-  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
-}
-
-.btn-primario {
-  background-color: #3182ce;
-  color: #ffffff;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-primario:hover {
-  background-color: #2b6cb0;
-}
-
-/* ==========================================
-   4. LISTA DE ELEMENTOS CON FLEXBOX
-   ========================================== */
-.lista-flex {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Cada <li> actúa como contenedor Flexbox horizontal */
-.lista-flex li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f7fafc;
-  padding: 12px 16px;
-  border-radius: 6px;
-  border-left: 4px solid #3182ce;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.lista-flex li span {
-  font-size: 1rem;
-  color: #2d3748;
-}
-
-/* Botón de eliminación */
-.btn-eliminar {
-  background-color: #b32f2f;
-  color: #ffffff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.4s ease;
-}
-
-.btn-eliminar:hover {
-  background-color: #df1f1f;
-}
+.btn-card-navegacion:hover .card-titulo { color: #10b981; }
+.btn-card-navegacion:hover .card-icono { background-color: #10b981; color: #ffffff; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
+.btn-card-navegacion:hover .card-flecha { color: #10b981; transform: translateX(8px); }

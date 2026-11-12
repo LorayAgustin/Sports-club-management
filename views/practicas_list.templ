@@ -1,0 +1,41 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// PracticasList renderiza el listado de prácticas deportivas
+templ PracticasList(practicas []sqlc.Practica) {
+	<div id="practicas-list-container">
+		<h2>Horarios de Prácticas</h2>
+		if len(practicas) == 0 {
+			<p>No hay prácticas registradas en el club actualmente.</p>
+		} else {
+			<table class="tabla-practicas">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>ID Categoría</th>
+						<th>ID Predio</th>
+						<th>Día de la Semana</th>
+						<th>Hora Inicio</th>
+						<th>Hora Fin</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, p := range practicas {
+						<tr>
+							<td>{ fmt.Sprintf("%d", p.IDPractica) }</td>
+							<td>{ fmt.Sprintf("%d", p.IDCategoria) }</td>
+							<td>{ fmt.Sprintf("%d", p.IDPredio) }</td>
+							<td>{ fmt.Sprintf("%v", p.Diasemana) }</td>
+							<td>{ fmt.Sprintf("%v", p.Horainicio) }</td>
+							<td>{ fmt.Sprintf("%v", p.Horafin) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}

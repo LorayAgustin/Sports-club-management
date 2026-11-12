@@ -1,0 +1,46 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+func obtenerNombreDeporte(idDeporte int32, deportes []sqlc.Deporte) string {
+	for _, d := range deportes { 
+		if d.IDDeporte == idDeporte { 
+			return d.Nombre 
+		} 
+	} 
+	return "No asignado" 
+}
+
+// CategoriasList renderiza el listado de categorías del club
+templ CategoriasList(categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
+	<div id="categorias-list-container">
+		<h2>Categorías Registradas</h2>
+		if len(categorias) == 0 {
+			<p>No hay categorías registradas en el club actualmente.</p>
+		} else {
+			<table class="tabla-categorias">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Nombre</th>
+						<th>ID Deporte</th>
+						<th>Deporte</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, c := range categorias {
+						<tr>
+							<td>{ fmt.Sprintf("%d", c.IDCategoria) }</td>
+							<td>{ c.Nombre }</td>
+							<td>{ fmt.Sprintf("%d", c.IDDeporte) }</td>
+							<td>{ obtenerNombreDeporte(c.IDDeporte, deportes) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}
