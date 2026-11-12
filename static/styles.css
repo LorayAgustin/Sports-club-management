@@ -1,41 +1,484 @@
-/* --- TEMA MODO OSCURO --- */
-.btn-card-navegacion {
-    display: flex; align-items: center; gap: 20px; width: 100%;
-    background-color: #1e293b; /* Fondo slate oscuro */
-    border: 1px solid #334155; /* Borde sutil */
-    border-radius: 12px; padding: 20px 24px;
-    font-family: inherit; text-align: left; cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+/* ==========================================
+   LAYOUT Y ESTRUCTURA DE PÁGINAS ABM
+   ========================================== */
+body {
+    background-color: #f4f6f8;
+    color: #2d3748;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    padding: 24px;
 }
 
-.card-icono {
+.header-principal {
+    max-width: 1200px;
+    margin: 0 auto 28px auto;
+}
+
+.header-contenido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-principal h1 {
+    color: #1a365d;
     font-size: 2rem;
-    background-color: #0f172a; /* Fondo ícono casi negro */
-    color: #94a3b8;
-    width: 60px; height: 60px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.card-titulo {
-    color: #f8fafc; /* Texto casi blanco */
-    font-weight: 700; font-size: 1.25rem;
-    transition: color 0.3s ease;
+.subtitulo-header {
+    color: #718096;
+    font-size: 0.95rem;
+    margin-top: 4px;
 }
 
-.card-flecha {
-    color: #475569; font-size: 1.5rem; font-weight: bold;
+.btn-volver {
+    display: inline-flex;
+    align-items: center;
+    color: #3182ce;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 8px 14px;
+    border-radius: 6px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e0;
     transition: all 0.2s ease;
 }
 
-/* Efecto Hover: Verde Esmeralda neón */
-.btn-card-navegacion:hover {
-    border-color: #10b981; /* Verde esmeralda */
-    background-color: #0f172a;
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+.btn-volver:hover {
+    color: #2b6cb0;
+    border-color: #3182ce;
+    transform: translateX(-3px);
+    box-shadow: 0 2px 5px rgba(49, 130, 206, 0.1);
 }
-.btn-card-navegacion:hover .card-titulo { color: #10b981; }
-.btn-card-navegacion:hover .card-icono { background-color: #10b981; color: #ffffff; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
-.btn-card-navegacion:hover .card-flecha { color: #10b981; transform: translateX(8px); }
+
+/* Grilla Asimétrica ABM (Formulario a la izq, Lista a la der) */
+.layout-abm {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+@media (max-width: 960px) {
+    .layout-abm {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tarjeta-seccion {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e2e8f0;
+}
+
+/* ==========================================
+   ESTILOS DE FORMULARIO
+   ========================================== */
+.form-header {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 12px;
+}
+
+.form-header h2 {
+    color: #1a365d;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.descripcion-seccion {
+    color: #4a5568;
+    font-size: 0.88rem;
+    margin-top: 4px;
+}
+
+.form-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-row {
+    display: flex;
+    gap: 14px;
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        flex-direction: column;
+    }
+}
+
+.campo-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    min-width: 0; /* Evita que inputs nativos desborden contenedores flex */
+}
+
+.campo-grupo label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #4a5568;
+}
+
+/* Control estricto de dimensiones en inputs y selects */
+.campo-grupo input,
+.select-estilizado {
+    width: 100%;
+    box-sizing: border-box; /* Evita que el padding sume ancho al contenedor */
+    padding: 11px 14px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    color: #2d3748;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo-grupo input:focus,
+.select-estilizado:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.18);
+}
+
+.input-hint {
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 2px;
+}
+
+.btn-primario {
+    background-color: #3182ce;
+    color: #ffffff;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primario:hover {
+    background-color: #2b6cb0;
+    transform: translateY(-1px);
+}
+
+.btn-primario:active {
+    transform: translateY(0);
+}
+
+/* ==========================================
+   TABLA DE DATOS Y BADGES
+   ========================================== */
+.listado-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 12px;
+}
+
+.listado-header h2 {
+    color: #1a365d;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.badge-contador {
+    background-color: #edf2f7;
+    color: #4a5568;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+.tabla-custom {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-custom th {
+    background-color: #f8fafc;
+    color: #718096;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tabla-custom td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #edf2f7;
+    font-size: 0.92rem;
+    color: #2d3748;
+}
+
+.tabla-custom tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.tabla-custom tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.col-destacada {
+    font-weight: 600;
+    color: #1a365d;
+}
+
+.col-secundaria {
+    color: #718096;
+}
+
+.id-tag {
+    font-family: monospace;
+    color: #718096;
+    font-size: 0.85rem;
+}
+
+.texto-derecha {
+    text-align: right;
+}
+
+.form-inline {
+    display: inline-block;
+}
+
+/* Badges de Estado/Rol */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.badge-admin {
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    border: 1px solid #bee3f8;
+}
+
+.badge-user {
+    background-color: #edf2f7;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+}
+
+/* Botón Eliminar */
+.btn-eliminar {
+    background-color: #ffffff;
+    color: #e53e3e;
+    border: 1px solid #feb2b2;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-eliminar:hover {
+    background-color: #e53e3e;
+    color: #ffffff;
+    border-color: #e53e3e;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.6;
+}
+
+.empty-state h3 {
+    color: #2d3748;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+}
+
+.empty-state p {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+/* Integración de tabla-usuarios con la paleta central */
+.tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-usuarios th {
+    background-color: #f8fafc;
+    color: #718096;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tabla-usuarios td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #edf2f7;
+    font-size: 0.92rem;
+    color: #2d3748;
+}
+
+.tabla-usuarios tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.tabla-usuarios tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* ==========================================
+   MENÚ PRINCIPAL (INDEX / HOME)
+   ========================================== */
+.home-contenedor {
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+.menu-columna {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.btn-card-navegacion {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #3182ce;
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.card-icono {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #ebf8ff;
+    color: #1a365d;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 2px;
+}
+
+.card-titulo {
+    color: #1a365d;
+    font-weight: 700;
+    font-size: 1.08rem;
+    transition: color 0.2s ease;
+}
+
+.card-subtitulo {
+    color: #718096;
+    font-size: 0.85rem;
+}
+
+.card-flecha {
+    color: #cbd5e0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.btn-card-navegacion:hover {
+    background-color: #ffffff;
+    border-color: #3182ce;
+    border-left-color: #1a365d;
+    transform: translateX(4px);
+    box-shadow: 0 6px 16px rgba(49, 130, 206, 0.12);
+}
+
+.btn-card-navegacion:hover .card-icono {
+    background-color: #3182ce;
+    color: #ffffff;
+}
+
+.btn-card-navegacion:hover .card-titulo {
+    color: #2b6cb0;
+}
+
+.btn-card-navegacion:hover .card-flecha {
+    color: #3182ce;
+    transform: translateX(4px);
+}
+
+.btn-card-navegacion:active {
+    transform: translateX(1px);
+    box-shadow: 0 2px 6px rgba(49, 130, 206, 0.08);
+}
+
+/* ==========================================
+   BADGES DE ESTADO PARA SOCIOS
+   ========================================== */
+.badge-activo {
+    background-color: #f0fff4;
+    color: #2f855a;
+    border: 1px solid #c6f6d5;
+}
+
+.badge-baja {
+    background-color: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+.icono-tabla {
+    margin-right: 6px;
+    font-size: 1.05rem;
+    vertical-align: middle;
+}

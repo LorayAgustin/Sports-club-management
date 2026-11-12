@@ -89,11 +89,8 @@ Sports-club-management/
 │   ├── practicas_form.templ
 │   ├── practicas_list.templ
 │   └── *_templ.go             # Código Go generado por `templ generate` (uno por cada .templ, no se versiona)
-├── static/                    # Archivos estáticos servidos en /static/ (solo CSS)
-│   ├── styles.css
-│   ├── styles-dark.css        # Tema utilizado por el layout base
-│   ├── styles-minimal.css
-│   └── styles-sport.css
+├── static/                    # Archivos estáticos servidos en /static/ (solo CSS)        
+│   └── styles.css             # Tema utilizado por el layout base
 ├── Dockerfile                 # Compila la app: sqlc generate, templ generate y go build
 ├── docker-compose.yml         # Orquestador multi-contenedor (App Go + PostgreSQL)
 ├── run-app.sh                 # Script de ejecución automatizada (build, run y limpieza)
