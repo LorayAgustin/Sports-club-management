@@ -461,3 +461,18 @@ body {
     transform: translateX(1px);
     box-shadow: 0 2px 6px rgba(49, 130, 206, 0.08);
 }
+
+/* ==========================================
+   BADGES DE ESTADO PARA SOCIOS
+   ========================================== */
+.badge-activo {
+    background-color: #f0fff4;
+    color: #2f855a;
+    border: 1px solid #c6f6d5;
+}
+
+.badge-baja {
+    background-color: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}

@@ -7,37 +7,47 @@ import (
 
 // SociosList renderiza el listado de socios del club
 templ SociosList(socios []sqlc.Socio) {
-	<div id="socios-list-container">
-		<h2>Socios Registrados</h2>
+	<div id="socios-list-container" class="listado-container">
+		<div class="listado-header">
+			<h2>Socios Registrados</h2>
+			<span class="badge-contador">{ fmt.Sprintf("%d registrados", len(socios)) }</span>
+		</div>
+
 		if len(socios) == 0 {
-			<p>No hay socios registrados en el club actualmente.</p>
+			<div class="empty-state">
+				<div class="empty-icon">🪪</div>
+				<h3>No hay socios registrados</h3>
+				<p>Completá el formulario de la izquierda para dar de alta el primer socio del club.</p>
+			</div>
 		} else {
-			<table class="tabla-usuarios">
-				<thead>
-					<tr>
-						<th>ID Usuario</th>
-						<th>DNI</th>
-						<th>Fecha de Alta</th>
-						<th>Fecha de Baja</th>
-					</tr>
-				</thead>
-				<tbody>
-					for _, s := range socios {
+			<div class="tabla-responsive">
+				<table class="tabla-custom">
+					<thead>
 						<tr>
-							<td>{ fmt.Sprintf("%d", s.IDUsuario) }</td>
-							<td>{ s.Dni }</td>
-							<td>{ s.Fechaalta.Format("02/01/2006") }</td>
-							<td>
-								if s.Fechabaja.Valid {
-									{ s.Fechabaja.Time.Format("02/01/2006") }
-								} else {
-									Activo
-								}
-							</td>
+							<th>ID Usuario</th>
+							<th>DNI</th>
+							<th>Fecha de Alta</th>
+							<th>Estado / Baja</th>
 						</tr>
-					}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						for _, s := range socios {
+							<tr>
+								<td><span class="id-tag">#{ fmt.Sprintf("%d", s.IDUsuario) }</span></td>
+								<td class="col-destacada">{ s.Dni }</td>
+								<td class="col-secundaria">{ s.Fechaalta.Format("02/01/2006") }</td>
+								<td>
+									if s.Fechabaja.Valid {
+										<span class="badge badge-baja">Baja: { s.Fechabaja.Time.Format("02/01/2006") }</span>
+									} else {
+										<span class="badge badge-activo">Activo</span>
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 		}
 	</div>
 }
