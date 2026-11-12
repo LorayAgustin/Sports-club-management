@@ -18,6 +18,18 @@ func NewCategoriaHandler(queries *sqlc.Queries) *CategoriaHandler {
 	return &CategoriaHandler{queries: queries}
 }
 
+// Handler central para la ruta /categorias (despacha GET o POST según el método HTTP)
+func (h *CategoriaHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.Index(w, r)
+	case http.MethodPost:
+		h.Create(w, r)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
 // GET /categorias: Muestra la página con el formulario y la tabla de categorías
 func (h *CategoriaHandler) Index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/categorias" && r.URL.Path != "/" {
@@ -32,7 +44,14 @@ func (h *CategoriaHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := views.IndexPage("Gestión del Club - Categorías", categorias).Render(r.Context(), w); err != nil {
+	deportes, err := h.queries.ListDeportes(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener deportes: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+
+	if err := views.CategoriasPage("Gestión del Club - Categorías", categorias, deportes).Render(r.Context(), w); err != nil {
 		log.Printf("Error al renderizar plantilla: %v", err)
 		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
 	}
@@ -68,7 +87,6 @@ func (h *CategoriaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Nombre:    nombre,
 		IDDeporte: int(idDeporte),
 	}
-
 	// Validar usando la capa /logic
 	if err := logic.ValidateCategoria(categoriaInput); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

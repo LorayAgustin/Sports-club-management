@@ -1,0 +1,41 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// InscripcionesList renderiza el listado de inscripciones del club
+templ InscripcionesList(inscripciones []sqlc.Inscripcione) {
+	<div id="inscripciones-list-container">
+		<h2>Inscripciones Registradas</h2>
+		if len(inscripciones) == 0 {
+			<p>No hay inscripciones registradas en el club actualmente.</p>
+		} else {
+			<table class="tabla-inscripciones">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>ID Socio</th>
+						<th>ID Categoría</th>
+						<th>Fecha Inscripción</th>
+						<th>Estado</th>
+						<th>Fecha Baja</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, i := range inscripciones {
+						<tr>
+							<td>{ fmt.Sprintf("%d", i.IDInscripcion) }</td>
+							<td>{ fmt.Sprintf("%d", i.IDSocio) }</td>
+							<td>{ fmt.Sprintf("%d", i.IDCategoria) }</td>
+							<td>{ fmt.Sprintf("%v", i.Fechainscripcion) }</td>
+							<td>{ i.Estado }</td>
+							<td>{ fmt.Sprintf("%v", i.Fechabaja) }</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}

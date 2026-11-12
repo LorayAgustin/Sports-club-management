@@ -1,0 +1,58 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// InscripcionForm renderiza el formulario de alta de inscripción
+templ InscripcionForm(socios []sqlc.Socio, categorias []sqlc.Categoria) {
+	<div class="form-container">
+		<h2>Agregar Nueva Inscripción</h2>
+		<form id="form-inscripcion" class="form-flex" action="/inscripciones" method="POST">
+			<label for="id-socio">Socio:</label>
+			<select id="IDSocio" name="id_socio" required>
+				<option value="" disabled selected>Seleccione un socio...</option>
+				for _, s := range socios {
+					<option value={ fmt.Sprintf("%d", s.IDSocio) }>
+						{ fmt.Sprintf("DNI: %s (ID: %s)", s.Dni, s.IDSocio) }
+					</option>
+				}
+			</select>
+
+			<label for="id-categoria">Categoría:</label>
+			<select id="id-categoria" name="id_categoria" required>
+				<option value="" disabled selected>Seleccione una categoría...</option>
+				for _, c := range categorias {
+					<option value={ fmt.Sprintf("%d", c.IDCategoria) }>{ c.Nombre }</option>
+				}
+			</select>
+
+			<label for="fecha-inscripcion">Fecha de Inscripción:</label>
+			<input
+				type="date"
+				id="fecha-inscripcion"
+				name="fecha_inscripcion"
+				required
+			/>
+
+			<label for="estado">Estado:</label>
+			<select id="estado" name="estado" required>
+				<option value="Activa" selected>Activa</option>
+				<option value="Inactiva">Inactiva</option>
+				<option value="Pendiente">Pendiente</option>
+			</select>
+
+			<label for="fecha-baja">Fecha de Baja (Opcional):</label>
+			<input
+				type="date"
+				id="fecha-baja"
+				name="fecha_baja"
+			/>
+
+			<button type="submit" id="agregarInscripcion" class="btn-primario">
+				Agregar Inscripción
+			</button>
+		</form>
+	</div>
+}

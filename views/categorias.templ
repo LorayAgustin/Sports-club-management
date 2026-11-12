@@ -1,0 +1,24 @@
+package views
+
+import (
+	sqlc "cl_gst/db/sqlc"
+)
+
+// CategoriasPage recibe el título y el listado de categorías
+templ CategoriasPage(title string, categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
+	@Layout(title, CategoriaContent(title, categorias, deportes))
+}
+
+templ CategoriaContent(title string, categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
+	<header class="header-principal">
+		<h1>Gestión del Club Deportivo</h1>
+	</header>
+	<main class="contenedor-principal">
+		<section class="tarjeta-seccion">
+			<h2>{ title }</h2>
+			@CategoriaForm(deportes)
+			<hr/>
+			@CategoriasList(categorias, deportes)
+		</section>
+	</main>
+}

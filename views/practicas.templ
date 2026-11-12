@@ -1,0 +1,24 @@
+package views
+
+import (
+	sqlc "cl_gst/db/sqlc"
+)
+
+// PracticasPage recibe el título, el listado de prácticas y las listas de categorías y predios para el formulario
+templ PracticasPage(title string, practicas []sqlc.Practica, categorias []sqlc.Categoria, predios []sqlc.Predio) {
+	@Layout(title, PracticaContent(title, practicas, categorias, predios))
+}
+
+templ PracticaContent(title string, practicas []sqlc.Practica, categorias []sqlc.Categoria, predios []sqlc.Predio) {
+	<header class="header-principal">
+		<h1>Gestión del Club Deportivo</h1>
+	</header>
+	<main class="contenedor-principal">
+		<section class="tarjeta-seccion">
+			<h2>{ title }</h2>
+			@PracticaForm(categorias, predios)
+			<hr/>
+			@PracticasList(practicas)
+		</section>
+	</main>
+}
