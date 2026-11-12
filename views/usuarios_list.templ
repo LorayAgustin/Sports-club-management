@@ -7,33 +7,57 @@ import (
 
 // UsuariosList renderiza el listado de usuarios del club
 templ UsuariosList(usuarios []sqlc.Usuario) {
-	<div id="usuarios-list-container">
-		<h2>Usuarios Registrados</h2>
+	<div id="usuarios-list-container" class="listado-container">
+		<div class="listado-header">
+			<h2>Usuarios Registrados</h2>
+			<span class="badge-contador">{ fmt.Sprintf("%d registrados", len(usuarios)) }</span>
+		</div>
+
 		if len(usuarios) == 0 {
-			<p>No hay usuarios registrados en el club actualmente.</p>
+			<div class="empty-state">
+				<div class="empty-icon">👤</div>
+				<h3>No hay usuarios registrados</h3>
+				<p>Completá el formulario para registrar el primer usuario del sistema.</p>
+			</div>
 		} else {
-			<table class="tabla-usuarios">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Nombre</th>
-						<th>Email</th>
-						<th>Fecha de Nacimiento</th>
-						<th>Rol</th>
-					</tr>
-				</thead>
-				<tbody>
-					for _, u := range usuarios {
+			<div class="tabla-responsive">
+				<table class="tabla-usuarios">
+					<thead>
 						<tr>
-							<td>{ fmt.Sprintf("%d", u.ID) }</td>
-							<td>{ u.Nombre }</td>
-							<td>{ u.Email }</td>
-							<td>{ u.Fechanacimiento.Format("02/01/2006") }</td>
-							<td>{ u.Rol }</td>
+							<th>ID</th>
+							<th>Nombre</th>
+							<th>Email</th>
+							<th>Fecha Nac.</th>
+							<th>Rol</th>
+							<th class="texto-derecha">Acciones</th>
 						</tr>
-					}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						for _, u := range usuarios {
+							<tr>
+								<td><span class="id-tag">#{ fmt.Sprintf("%d", u.ID) }</span></td>
+								<td class="col-destacada">{ u.Nombre }</td>
+								<td class="col-secundaria">{ u.Email }</td>
+								<td>{ u.Fechanacimiento.Format("02/01/2006") }</td>
+								<td>
+									if u.Rol == "administrador" {
+										<span class="badge badge-admin">Administrador</span>
+									} else {
+										<span class="badge badge-user">Usuario</span>
+									}
+								</td>
+								<td class="col-acciones texto-derecha">
+									<form action={ templ.SafeURL(fmt.Sprintf("/usuarios/eliminar?id=%d", u.ID)) } method="POST" class="form-inline">
+										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar este usuario?');">
+											Eliminar
+										</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 		}
 	</div>
 }

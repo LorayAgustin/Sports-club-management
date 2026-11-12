@@ -3,52 +3,67 @@ package views
 // UsuarioForm renderiza el formulario de alta de usuario
 templ UsuarioForm() {
 	<div class="form-container">
-		<h2>Agregar Nuevo Usuario</h2>
+		<div class="form-header">
+			<h2>Agregar Nuevo Usuario</h2>
+			<p class="descripcion-seccion">Ingresá las credenciales y el rol asignado al usuario.</p>
+		</div>
+
 		<form id="form-usuario" class="form-flex" action="/usuarios" method="POST">
-			<label for="nombre-usuario">Nombre:</label>
-			<input
-				type="text"
-				id="nombre-usuario"
-				name="nombre"
-				placeholder="Ej: Juan Pérez"
-				required
-			/>
+			<div class="campo-grupo">
+				<label for="nombre-usuario">Nombre Completo</label>
+				<input
+					type="text"
+					id="nombre-usuario"
+					name="nombre"
+					placeholder="Ej: Juan Pérez"
+					required
+				/>
+			</div>
 
-			<label for="email-usuario">Correo Electrónico:</label>
-			<input
-				type="email"
-				id="email-usuario"
-				name="email"
-				placeholder="ejemplo@email.com"
-				required
-			/>
+			<div class="campo-grupo">
+				<label for="email-usuario">Correo Electrónico</label>
+				<input
+					type="email"
+					id="email-usuario"
+					name="email"
+					placeholder="ejemplo@email.com"
+					required
+				/>
+			</div>
 
-			<label for="contrasena-usuario">Contraseña:</label>
-			<input
-				type="password"
-				id="contrasena-usuario"
-				name="contrasena"
-				placeholder="Mínimo 8 caracteres, mayúscula, número y especial"
-				required
-			/>
+			<div class="campo-grupo">
+				<label for="contrasena-usuario">Contraseña</label>
+				<input
+					type="password"
+					id="contrasena-usuario"
+					name="contrasena"
+					placeholder="••••••••"
+					required
+				/>
+				<span class="input-hint">Mín. 8 caracteres (Mayúscula, número y especial).</span>
+			</div>
 
-			<label for="fechaNacimiento-usuario">Fecha de Nacimiento:</label>
-			<input
-				type="date"
-				id="fechaNacimiento-usuario"
-				name="fechaNacimiento"
-				required
-			/>
+			<div class="campo-grupo">
+				<label for="fechaNacimiento-usuario">Fecha de Nacimiento</label>
+				<input
+					type="date"
+					id="fechaNacimiento-usuario"
+					name="fechaNacimiento"
+					required
+				/>
+			</div>
 
-			<label for="rol-usuario">Rol:</label>
-			<select id="rol-usuario" name="rol" required>
-				<option value="" disabled selected>Seleccione un rol</option>
-				<option value="usuario">Usuario</option>
-				<option value="administrador">Administrador</option>
-			</select>
+			<div class="campo-grupo">
+				<label for="rol-usuario">Rol en el Sistema</label>
+				<select id="rol-usuario" name="rol" required class="select-estilizado">
+					<option value="" disabled selected>Seleccione un rol</option>
+					<option value="usuario">Usuario</option>
+					<option value="administrador">Administrador</option>
+				</select>
+			</div>
 
 			<button type="submit" id="agregarUsuario" class="btn-primario">
-				Agregar Usuario
+				+ Registrar Usuario
 			</button>
 		</form>
 	</div>
