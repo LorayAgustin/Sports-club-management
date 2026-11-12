@@ -1,0 +1,39 @@
+package views
+
+// SocioForm renderiza el formulario de alta de socio
+templ SocioForm() {
+    <div class="form-container">
+        <h2>Agregar Nuevo Socio</h2>
+        <form id="form-socio" class="form-flex" action="/socios" method="POST">
+            <label for="id_usuario-socio">ID Usuario:</label>
+            <input
+                type="number"
+                id="id_usuario-socio"
+                name="id_usuario"
+                placeholder="Ej: 1"
+                min="1"
+                required
+            />
+
+            <label for="dni-socio">DNI:</label>
+            <input
+                type="text"
+                id="dni-socio"
+                name="dni"
+                placeholder="Ej: 35123456"
+                required
+            />
+
+            <label for="fechaAlta-socio">Fecha de Alta:</label>
+            <input
+                type="date"
+                id="fechaAlta-socio"
+                name="fechaAlta"
+            />
+
+            <button type="submit" id="agregarSocio" class="btn-primario">
+                Agregar Socio
+            </button>
+        </form>
+    </div>
+}

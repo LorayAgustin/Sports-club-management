@@ -1,0 +1,24 @@
+package views
+
+import (
+	sqlc "cl_gst/db/sqlc"
+)
+
+// SociosPage recibe el título y el listado de socios
+templ SociosPage(title string, socios []sqlc.Socio) {
+	@Layout(title, SocioContent(title, socios))
+}
+
+templ SocioContent(title string, socios []sqlc.Socio) {
+	<header class="header-principal">
+		<h1>Gestión del Club Deportivo</h1>
+	</header>
+	<main class="contenedor-principal">
+		<section class="tarjeta-seccion">
+			<h2>{ title }</h2>
+			@SocioForm()
+			<hr/>
+			@SociosList(socios)
+		</section>
+	</main>
+}

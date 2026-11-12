@@ -1,0 +1,43 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// SociosList renderiza el listado de socios del club
+templ SociosList(socios []sqlc.Socio) {
+	<div id="socios-list-container">
+		<h2>Socios Registrados</h2>
+		if len(socios) == 0 {
+			<p>No hay socios registrados en el club actualmente.</p>
+		} else {
+			<table class="tabla-usuarios">
+				<thead>
+					<tr>
+						<th>ID Usuario</th>
+						<th>DNI</th>
+						<th>Fecha de Alta</th>
+						<th>Fecha de Baja</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, s := range socios {
+						<tr>
+							<td>{ fmt.Sprintf("%d", s.IDUsuario) }</td>
+							<td>{ s.Dni }</td>
+							<td>{ s.Fechaalta.Format("02/01/2006") }</td>
+							<td>
+								if s.Fechabaja.Valid {
+									{ s.Fechabaja.Time.Format("02/01/2006") }
+								} else {
+									Activo
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+}

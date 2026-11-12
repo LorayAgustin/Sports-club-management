@@ -42,6 +42,7 @@ func main() {
 	deporteHandler := handlers.NewDeporteHandler(queries)
 	prediosHandler := handlers.NewPredioHandler(queries)
 	//categoriasHandler := handlers.NewCategoriaHandler(queries)
+	sociosHandler := handlers.NewSocioHandler(queries)
 
 	// Archivos estaticos
 	fs := http.FileServer(http.Dir("static"))
@@ -52,6 +53,9 @@ func main() {
 
 	// Usuarios
 	http.HandleFunc("/usuarios", usuarioHandler.Handle)
+
+	// Socios
+	http.HandleFunc("/socios", sociosHandler.Handle)
 
 	// Deportes
 	http.HandleFunc("/deportes", deporteHandler.Handle)
