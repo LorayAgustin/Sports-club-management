@@ -18,6 +18,18 @@ func NewUsuarioHandler(queries *sqlc.Queries) *UsuarioHandler {
 	return &UsuarioHandler{queries: queries}
 }
 
+// Handler central para la ruta /deportes (despacha GET o POST según el método HTTP)
+func (h *UsuarioHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.Index(w, r)
+	case http.MethodPost:
+		h.Create(w, r)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
 // GET /usuarios: Consulta la base de datos y renderiza la vista
 func (h *UsuarioHandler) Index(w http.ResponseWriter, r *http.Request) {
 	// Validar que la ruta sea exactamente "/" o "/usuarios"
@@ -33,7 +45,7 @@ func (h *UsuarioHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := views.IndexPage("Gestión del Club - Usuarios", usuarios).Render(r.Context(), w); err != nil {
+	if err := views.UsuariosPage("Gestión del Club - Usuarios", usuarios).Render(r.Context(), w); err != nil {
 		log.Printf("Error al renderizar plantilla: %v", err)
 		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
 	}
