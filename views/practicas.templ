@@ -11,13 +11,23 @@ templ PracticasPage(title string, practicas []sqlc.Practica, categorias []sqlc.C
 
 templ PracticaContent(title string, practicas []sqlc.Practica, categorias []sqlc.Categoria, predios []sqlc.Predio) {
 	<header class="header-principal">
-		<h1>Gestión del Club Deportivo</h1>
+		<div class="header-contenido">
+			<div>
+				<h1>Gestión del Club Deportivo</h1>
+				<p class="subtitulo-header">Administración de horarios de entrenamiento, categorías y asignación de predios</p>
+			</div>
+			<a href="/" class="btn-volver">← Volver al Menú Principal</a>
+		</div>
 	</header>
-	<main class="contenedor-principal">
+
+	<main class="layout-abm">
+		<!-- Tarjeta 1: Formulario de Alta -->
 		<section class="tarjeta-seccion">
-			<h2>{ title }</h2>
 			@PracticaForm(categorias, predios)
-			<hr/>
+		</section>
+
+		<!-- Tarjeta 2: Listado de Prácticas -->
+		<section class="tarjeta-seccion">
 			@PracticasList(practicas)
 		</section>
 	</main>

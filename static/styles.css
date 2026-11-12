@@ -482,3 +482,22 @@ body {
     font-size: 1.05rem;
     vertical-align: middle;
 }
+
+
+/* ==========================================
+   ETIQUETA DE HORARIOS (PRÁCTICAS)
+   ========================================== */
+.horario-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #4a5568;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+}

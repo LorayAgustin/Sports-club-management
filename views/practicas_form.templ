@@ -8,54 +8,68 @@ import (
 // PracticaForm renderiza el formulario de alta de práctica
 templ PracticaForm(categorias []sqlc.Categoria, predios []sqlc.Predio) {
 	<div class="form-container">
-		<h2>Agregar Nueva Práctica</h2>
+		<div class="form-header">
+			<h2>Agregar Nueva Práctica</h2>
+			<p class="descripcion-seccion">Definí la categoría, el predio y la franja horaria de entrenamiento.</p>
+		</div>
+
 		<form id="form-practica" class="form-flex" action="/practicas" method="POST">
-			<label for="id-categoria">Categoría:</label>
-			<select id="id-categoria" name="id_categoria" required>
-				<option value="" disabled selected>Seleccione una categoría...</option>
-				for _, c := range categorias {
-					<option value={ fmt.Sprintf("%d", c.IDCategoria) }>{ c.Nombre }</option>
-				}
-			</select>
+			<div class="campo-grupo">
+				<label for="id-categoria">Categoría</label>
+				<select id="id-categoria" name="id_categoria" required class="select-estilizado">
+					<option value="" disabled selected>Seleccione una categoría...</option>
+					for _, c := range categorias {
+						<option value={ fmt.Sprintf("%d", c.IDCategoria) }>{ c.Nombre }</option>
+					}
+				</select>
+			</div>
 
-			<label for="id-predio">Predio:</label>
-			<select id="id-predio" name="id_predio" required>
-				<option value="" disabled selected>Seleccione un predio...</option>
-				for _, p := range predios {
-					<option value={ fmt.Sprintf("%d", p.IDPredio) }>{ p.Nombre }</option>
-				}
-			</select>
+			<div class="campo-grupo">
+				<label for="id-predio">Predio</label>
+				<select id="id-predio" name="id_predio" required class="select-estilizado">
+					<option value="" disabled selected>Seleccione un predio...</option>
+					for _, p := range predios {
+						<option value={ fmt.Sprintf("%d", p.IDPredio) }>{ p.Nombre }</option>
+					}
+				</select>
+			</div>
 
-			<label for="dia-semana">Día de la Semana:</label>
-			<select id="dia-semana" name="dia_semana" required>
-				<option value="" disabled selected>Seleccione un día...</option>
-				<option value="Lunes">Lunes</option>
-				<option value="Martes">Martes</option>
-				<option value="Miércoles">Miércoles</option>
-				<option value="Jueves">Jueves</option>
-				<option value="Viernes">Viernes</option>
-				<option value="Sábado">Sábado</option>
-				<option value="Domingo">Domingo</option>
-			</select>
+			<div class="campo-grupo">
+				<label for="dia-semana">Día de la Semana</label>
+				<select id="dia-semana" name="dia_semana" required class="select-estilizado">
+					<option value="" disabled selected>Seleccione un día...</option>
+					<option value="Lunes">Lunes</option>
+					<option value="Martes">Martes</option>
+					<option value="Miércoles">Miércoles</option>
+					<option value="Jueves">Jueves</option>
+					<option value="Viernes">Viernes</option>
+					<option value="Sábado">Sábado</option>
+					<option value="Domingo">Domingo</option>
+				</select>
+			</div>
 
-			<label for="hora-inicio">Hora de Inicio:</label>
-			<input
-				type="time"
-				id="hora-inicio"
-				name="hora_inicio"
-				required
-			/>
+			<div class="campo-grupo">
+				<label for="hora-inicio">Hora de Inicio</label>
+				<input
+					type="time"
+					id="hora-inicio"
+					name="hora_inicio"
+					required
+				/>
+			</div>
 
-			<label for="hora-fin">Hora de Fin:</label>
-			<input
-				type="time"
-				id="hora-fin"
-				name="hora_fin"
-				required
-			/>
+			<div class="campo-grupo">
+				<label for="hora-fin">Hora de Fin</label>
+				<input
+					type="time"
+					id="hora-fin"
+					name="hora_fin"
+					required
+				/>
+			</div>
 
 			<button type="submit" id="agregarPractica" class="btn-primario">
-				Agregar Práctica
+				+ Agregar Práctica
 			</button>
 		</form>
 	</div>

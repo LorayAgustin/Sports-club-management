@@ -6,36 +6,57 @@ import (
 )
 
 // PracticasList renderiza el listado de prácticas deportivas
+// PracticasList renderiza el listado de horarios de prácticas con Empty State y badges
 templ PracticasList(practicas []sqlc.Practica) {
-	<div id="practicas-list-container">
-		<h2>Horarios de Prácticas</h2>
+	<div id="practicas-list-container" class="listado-container">
+		<div class="listado-header">
+			<h2>Horarios de Prácticas</h2>
+			<span class="badge-contador">{ fmt.Sprintf("%d registradas", len(practicas)) }</span>
+		</div>
+
 		if len(practicas) == 0 {
-			<p>No hay prácticas registradas en el club actualmente.</p>
+			<div class="empty-state">
+				<div class="empty-icon">📋</div>
+				<h3>No hay prácticas registradas</h3>
+				<p>Completá el formulario de la izquierda para programar el primer horario.</p>
+			</div>
 		} else {
-			<table class="tabla-practicas">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>ID Categoría</th>
-						<th>ID Predio</th>
-						<th>Día de la Semana</th>
-						<th>Hora Inicio</th>
-						<th>Hora Fin</th>
-					</tr>
-				</thead>
-				<tbody>
-					for _, p := range practicas {
+			<div class="tabla-responsive">
+				<table class="tabla-custom">
+					<thead>
 						<tr>
-							<td>{ fmt.Sprintf("%d", p.IDPractica) }</td>
-							<td>{ fmt.Sprintf("%d", p.IDCategoria) }</td>
-							<td>{ fmt.Sprintf("%d", p.IDPredio) }</td>
-							<td>{ fmt.Sprintf("%v", p.Diasemana) }</td>
-							<td>{ fmt.Sprintf("%v", p.Horainicio) }</td>
-							<td>{ fmt.Sprintf("%v", p.Horafin) }</td>
+							<th>ID</th>
+							<th>Categoría</th>
+							<th>Predio</th>
+							<th>Día</th>
+							<th>Franja Horaria</th>
+							<th class="texto-derecha">Acciones</th>
 						</tr>
-					}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						for _, p := range practicas {
+							<tr>
+								<td><span class="id-tag">#{ fmt.Sprintf("%d", p.IDPractica) }</span></td>
+								<td><span class="badge badge-admin">Cat. #{ fmt.Sprintf("%d", p.IDCategoria) }</span></td>
+								<td><span class="badge badge-user">Predio #{ fmt.Sprintf("%d", p.IDPredio) }</span></td>
+								<td class="col-destacada">{ fmt.Sprintf("%v", p.Diasemana) }</td>
+								<td>
+									<span class="horario-tag">
+										🕒 { fmt.Sprintf("%v", p.Horainicio) } - { fmt.Sprintf("%v", p.Horafin) }
+									</span>
+								</td>
+								<td class="col-acciones texto-derecha">
+									<form action={ templ.SafeURL(fmt.Sprintf("/practicas/eliminar?id=%d", p.IDPractica)) } method="POST" class="form-inline">
+										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar este horario de práctica?');">
+											Eliminar
+										</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 		}
 	</div>
 }
