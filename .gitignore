@@ -36,3 +36,6 @@ db/sqlc/
 
 # Archivos creados por template generate
 *_templ.go
+
+# Archivos JavaScript
+*.js
