@@ -7,19 +7,28 @@ templ IndexPage(title string) {
 
 templ indexContent(title string) {
 	<header class="header-principal">
-		<h1>Gestión del Club Deportivo</h1>
-		<p class="subtitulo-header">Panel de control general</p>
+		<div class="header-contenido">
+			<div>
+				<h1>Gestión del Club Deportivo</h1>
+				<p class="subtitulo-header">Panel de control general y administración de entidades</p>
+			</div>
+			<span class="badge-contador">7 módulos activos</span>
+		</div>
 	</header>
-	<main class="contenedor-principal home-contenedor">
-		<section class="tarjeta-seccion tarjeta-home">
-			<h2>Menú de Navegación</h2>
-			<p class="descripcion-seccion">Seleccioná la sección que desees administrar:</p>
-			
-			<nav class="menu-columna">
+
+	<main class="home-contenedor">
+		<section class="tarjeta-seccion">
+			<div class="form-header">
+				<h2>Menú de Navegación</h2>
+				<p class="descripcion-seccion">Seleccioná el gestor que desees administrar:</p>
+			</div>
+
+			<nav class="menu-columna" aria-label="Módulos de gestión">
 				<button type="button" class="btn-card-navegacion" onclick="window.location.href='/usuarios'">
 					<div class="card-icono">👤</div>
 					<div class="card-info">
 						<span class="card-titulo">Gestión de Usuarios</span>
+						<span class="card-subtitulo">Cuentas de acceso, credenciales y roles del sistema</span>
 					</div>
 					<span class="card-flecha">→</span>
 				</button>
@@ -28,6 +37,7 @@ templ indexContent(title string) {
 					<div class="card-icono">🪪</div>
 					<div class="card-info">
 						<span class="card-titulo">Gestión de Socios</span>
+						<span class="card-subtitulo">Padrón de afiliados, datos personales y estado</span>
 					</div>
 					<span class="card-flecha">→</span>
 				</button>
@@ -36,6 +46,7 @@ templ indexContent(title string) {
 					<div class="card-icono">⚽</div>
 					<div class="card-info">
 						<span class="card-titulo">Gestión de Deportes</span>
+						<span class="card-subtitulo">Disciplinas y actividades deportivas del club</span>
 					</div>
 					<span class="card-flecha">→</span>
 				</button>
@@ -44,6 +55,7 @@ templ indexContent(title string) {
 					<div class="card-icono">🏟️</div>
 					<div class="card-info">
 						<span class="card-titulo">Gestión de Predios</span>
+						<span class="card-subtitulo">Sedes, canchas e instalaciones disponibles</span>
 					</div>
 					<span class="card-flecha">→</span>
 				</button>
@@ -52,6 +64,7 @@ templ indexContent(title string) {
 					<div class="card-icono">📋</div>
 					<div class="card-info">
 						<span class="card-titulo">Gestión de Prácticas</span>
+						<span class="card-subtitulo">Horarios, entrenamientos y asignación de espacios</span>
 					</div>
 					<span class="card-flecha">→</span>
 				</button>
@@ -60,6 +73,7 @@ templ indexContent(title string) {
 					<div class="card-icono">🏆</div>
 					<div class="card-info">
 						<span class="card-titulo">Gestión de Categorías</span>
+						<span class="card-subtitulo">Divisiones por edad y niveles competitivos</span>
 					</div>
 					<span class="card-flecha">→</span>
 				</button>
@@ -68,6 +82,7 @@ templ indexContent(title string) {
 					<div class="card-icono">📝</div>
 					<div class="card-info">
 						<span class="card-titulo">Gestión de Inscripciones</span>
+						<span class="card-subtitulo">Registro de socios en disciplinas y categorías</span>
 					</div>
 					<span class="card-flecha">→</span>
 				</button>
