@@ -2,20 +2,28 @@ package views
 
 // DeporteForm renderiza el formulario de alta de deporte
 templ DeporteForm() {
-    <div class="form-container">
-        <h2>Agregar Nuevo Deporte</h2>
-        <form id="form-deporte" class="form-flex" action="/deportes" method="POST">
-            <label for="nombre-deporte">Nombre del Deporte:</label>
-            <input
-                type="text"
-                id="nombre-deporte"
-                name="nombre"
-                placeholder="Ej: Fútbol, Rugby, Basquet..."
-                required
-            />
-            <button type="submit" id="agregarDeporte" class="btn-primario">
-                Agregar Deporte
-            </button>
-        </form>
-    </div>
+	<div class="form-container">
+		<div class="form-header">
+			<h2>Agregar Nuevo Deporte</h2>
+			<p class="descripcion-seccion">Ingresá el nombre de la disciplina o actividad deportiva.</p>
+		</div>
+
+		<form id="form-deporte" class="form-flex" action="/deportes" method="POST">
+			<div class="campo-grupo">
+				<label for="nombre-deporte">Nombre del Deporte</label>
+				<input
+					type="text"
+					id="nombre-deporte"
+					name="nombre"
+					placeholder="Ej: Fútbol, Rugby, Basquet..."
+					required
+				/>
+				<span class="input-hint">Ejemplo: Tenis, Natación, Vóley, Gimnasia.</span>
+			</div>
+
+			<button type="submit" id="agregarDeporte" class="btn-primario">
+				+ Agregar Deporte
+			</button>
+		</form>
+	</div>
 }

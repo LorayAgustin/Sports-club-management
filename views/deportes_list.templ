@@ -7,28 +7,47 @@ import (
 
 // DeportesList renderiza el listado de disciplinas deportivas
 templ DeportesList(deportes []sqlc.Deporte) {
-    <div id="deportes-list-container">
-        <h2 class="titulo-lista">Disciplinas Deportivas</h2>
-        if len(deportes) == 0 {
-            <p class="mensaje-vacio">No hay deportes registrados en el club actualmente.</p>
-        } else {
-            <div class="grid-deportes">
-                for _, d := range deportes {
-                    <div class="tarjeta-deporte-row">
-                        <!-- Columna ID -->
-                        <div class="col-seccion id-seccion">
-                            <span class="etiqueta">ID</span>
-                            <span class="valor-id">#{ fmt.Sprintf("%d", d.IDDeporte) }</span>
-                        </div>
-                        
-                        <!-- Columna Nombre -->
-                        <div class="col-seccion nombre-seccion">
-                            <span class="etiqueta">Deporte</span>
-                            <span class="valor-nombre">{ d.Nombre }</span>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-    </div>
+	<div id="deportes-list-container" class="listado-container">
+		<div class="listado-header">
+			<h2>Disciplinas Deportivas</h2>
+			<span class="badge-contador">{ fmt.Sprintf("%d registradas", len(deportes)) }</span>
+		</div>
+
+		if len(deportes) == 0 {
+			<div class="empty-state">
+				<div class="empty-icon">⚽</div>
+				<h3>No hay deportes registrados</h3>
+				<p>Completá el formulario de la izquierda para dar de alta la primera disciplina.</p>
+			</div>
+		} else {
+			<div class="tabla-responsive">
+				<table class="tabla-custom">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Disciplina / Nombre</th>
+							<th class="texto-derecha">Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, d := range deportes {
+							<tr>
+								<td><span class="id-tag">#{ fmt.Sprintf("%d", d.IDDeporte) }</span></td>
+								<td class="col-destacada">
+									<span class="icono-tabla">⚽</span> { d.Nombre }
+								</td>
+								<td class="col-acciones texto-derecha">
+									<form action={ templ.SafeURL(fmt.Sprintf("/deportes/eliminar?id=%d", d.IDDeporte)) } method="POST" class="form-inline">
+										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta disciplina deportiva?');">
+											Eliminar
+										</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
 }
