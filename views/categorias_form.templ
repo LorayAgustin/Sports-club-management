@@ -1,0 +1,33 @@
+package views
+
+import (
+	"fmt"
+	sqlc "cl_gst/db/sqlc"
+)
+
+// CategoriaForm renderiza el formulario de alta de categoría
+templ CategoriaForm(deportes []sqlc.Deporte) {
+	<div class="form-container">
+		<h2>Agregar Nueva Categoría</h2>
+		<form id="form-categoria" class="form-flex" action="/categorias" method="POST">
+			<label for="nombre-categoria">Nombre de la Categoría:</label>
+			<input
+				type="text"
+				id="nombre-categoria"
+				name="nombre"
+				placeholder="Ej: Sub-18, Primera, Senior..."
+				required
+			/>
+			<label for="id-deporte">Deporte Asociado:</label>
+			<select id="id-deporte" name="id_deporte" required>
+				<option value="" disabled selected>Seleccione un deporte...</option>
+				for _, d := range deportes {
+					<option value={ fmt.Sprintf("%d", d.IDDeporte) }>{ d.Nombre }</option>
+				}
+			</select>
+			<button type="submit" id="agregarCategoria" class="btn-primario">
+				Agregar Categoría
+			</button>
+		</form>
+	</div>
+}
