@@ -8,6 +8,8 @@ templ Layout(title string, content templ.Component) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ title }</title>
+			<!--- Carga global de HTMX via CDN -->
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 			<link rel="stylesheet" href="/static/styles.css"/>
 		</head>
 		<body>
