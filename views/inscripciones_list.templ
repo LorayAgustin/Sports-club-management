@@ -7,35 +7,67 @@ import (
 
 // InscripcionesList renderiza el listado de inscripciones del club
 templ InscripcionesList(inscripciones []sqlc.Inscripcione) {
-	<div id="inscripciones-list-container">
-		<h2>Inscripciones Registradas</h2>
+	<div id="inscripciones-list-container" class="listado-container">
+		<div class="listado-header">
+			<h2>Inscripciones Registradas</h2>
+			<span class="badge-contador">{ fmt.Sprintf("%d registradas", len(inscripciones)) }</span>
+		</div>
+
 		if len(inscripciones) == 0 {
-			<p>No hay inscripciones registradas en el club actualmente.</p>
+			<div class="empty-state">
+				<div class="empty-icon">📝</div>
+				<h3>No hay inscripciones registradas</h3>
+				<p>Completá el formulario de la izquierda para registrar la primera inscripción.</p>
+			</div>
 		} else {
-			<table class="tabla-inscripciones">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>ID Socio</th>
-						<th>ID Categoría</th>
-						<th>Fecha Inscripción</th>
-						<th>Estado</th>
-						<th>Fecha Baja</th>
-					</tr>
-				</thead>
-				<tbody>
-					for _, i := range inscripciones {
+			<div class="tabla-responsive">
+				<table class="tabla-custom">
+					<thead>
 						<tr>
-							<td>{ fmt.Sprintf("%d", i.IDInscripcion) }</td>
-							<td>{ fmt.Sprintf("%d", i.IDSocio) }</td>
-							<td>{ fmt.Sprintf("%d", i.IDCategoria) }</td>
-							<td>{ fmt.Sprintf("%v", i.Fechainscripcion) }</td>
-							<td>{ i.Estado }</td>
-							<td>{ fmt.Sprintf("%v", i.Fechabaja) }</td>
+							<th>ID</th>
+							<th>Socio</th>
+							<th>Categoría</th>
+							<th>Inscripción</th>
+							<th>Estado</th>
+							<th>Baja</th>
+							<th class="texto-derecha">Acciones</th>
 						</tr>
-					}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						for _, i := range inscripciones {
+							<tr>
+								<td><span class="id-tag">#{ fmt.Sprintf("%d", i.IDInscripcion) }</span></td>
+								<td><span class="badge badge-user">Socio #{ fmt.Sprintf("%d", i.IDSocio) }</span></td>
+								<td><span class="badge badge-admin">Cat. #{ fmt.Sprintf("%d", i.IDCategoria) }</span></td>
+								<td class="col-secundaria">{ i.Fechainscripcion.Format("02/01/2006") }</td>
+								<td>
+									if i.Estado == "Activa" {
+										<span class="badge badge-activo">Activa</span>
+									} else if i.Estado == "Pendiente" {
+										<span class="badge badge-pendiente">Pendiente</span>
+									} else {
+										<span class="badge badge-baja">{ i.Estado }</span>
+									}
+								</td>
+								<td class="col-secundaria">
+									if i.Fechabaja.Valid {
+										{ i.Fechabaja.Time.Format("02/01/2006") }
+									} else {
+										<span>—</span>
+									}
+								</td>
+								<td class="col-acciones texto-derecha">
+									<form action={ templ.SafeURL(fmt.Sprintf("/inscripciones/eliminar?id=%d", i.IDInscripcion)) } method="POST" class="form-inline">
+										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta inscripción?');">
+											Eliminar
+										</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 		}
 	</div>
 }

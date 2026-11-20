@@ -11,13 +11,23 @@ templ CategoriasPage(title string, categorias []sqlc.Categoria, deportes []sqlc.
 
 templ CategoriaContent(title string, categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
 	<header class="header-principal">
-		<h1>Gestión del Club Deportivo</h1>
+		<div class="header-contenido">
+			<div>
+				<h1>Gestión del Club Deportivo</h1>
+				<p class="subtitulo-header">Administración de divisiones, niveles y categorías por disciplina</p>
+			</div>
+			<a href="/" class="btn-volver">← Volver al Menú Principal</a>
+		</div>
 	</header>
-	<main class="contenedor-principal">
+
+	<main class="layout-abm">
+		<!-- Tarjeta 1: Formulario de Alta -->
 		<section class="tarjeta-seccion">
-			<h2>{ title }</h2>
 			@CategoriaForm(deportes)
-			<hr/>
+		</section>
+
+		<!-- Tarjeta 2: Listado de Categorías -->
+		<section class="tarjeta-seccion">
 			@CategoriasList(categorias, deportes)
 		</section>
 	</main>
