@@ -26,6 +26,8 @@ func (h *InscripcionHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		h.Index(w, r)
 	case http.MethodPost:
 		h.Create(w, r)
+	case http.MethodDelete:
+		h.Delete(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -130,6 +132,44 @@ func (h *InscripcionHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirección PRG a la lista de inscripciones
-	http.Redirect(w, r, "/inscripciones", http.StatusSeeOther)
+	inscripciones, err := h.queries.ListInscripciones(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener inscripciones actualizadas: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+	if err := views.InscripcionesList(inscripciones).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar listado de inscripciones: %v", err)
+		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
+		return
+	}
+	socios, err := h.queries.ListSocios(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener socios para reseteo OOB: %v", err)
+		return
+	}
+	categorias, err := h.queries.ListCategorias(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener categorías para reseteo OOB: %v", err)
+		return
+	}
+	if err := views.InscripcionFormOOB(socios, categorias).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar formulario OOB de inscripción: %v", err)
+	}
+}
+
+func (h *InscripcionHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id <= 0 {
+		http.Error(w, "ID de inscripción no válido", http.StatusBadRequest)
+		return
+	}
+	err = h.queries.DeleteInscripcion(r.Context(), int32(id))
+	if err != nil {
+		log.Printf("Error al eliminar inscripción: %v", err)
+		http.Error(w, "Error al eliminar en la base de datos", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }

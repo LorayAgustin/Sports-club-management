@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	sqlc "cl_gst/db/sqlc"
 	"cl_gst/logic"
@@ -24,6 +25,8 @@ func (h *DeporteHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		h.Index(w, r)
 	case http.MethodPost:
 		h.Create(w, r)
+	case http.MethodDelete:
+		h.Delete(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -83,6 +86,38 @@ func (h *DeporteHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirección PRG a la página principal
-	http.Redirect(w, r, "/deportes", http.StatusSeeOther)
+	deportes, err := h.queries.ListDeportes(r.Context())
+	if err != nil {
+		log.Printf("Error al consultar deportes actualizados: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+
+	if err := views.DeportesList(deportes).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar plantilla: %v", err)
+		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
+		return
+	}
+
+	if err := views.DeporteFormOOB().Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar formulario OOB: %v", err)
+	}
+}
+
+// DELETE /deportes?id=X: Elimina una disciplina de la BD y responde 200 OK
+func (h *DeporteHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id == 0 {
+		http.Error(w, "ID de deporte no válido", http.StatusBadRequest)
+		return
+	}
+
+	err = h.queries.DeleteDeporte(r.Context(), int32(id))
+	if err != nil {
+		log.Printf("Error al eliminar deporte: %v", err)
+		http.Error(w, "Error al eliminar en la base de datos", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }

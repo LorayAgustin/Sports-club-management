@@ -7,7 +7,7 @@ import (
 
 // PrediosList renderiza el listado de predios del club
 templ PrediosList(predios []sqlc.Predio) {
-	<div id="predios-list-container" class="listado-container">
+	<div id="predios-list" class="listado-container">
 		<div class="listado-header">
 			<h2>Predios del Club</h2>
 			<span class="badge-contador">{ fmt.Sprintf("%d registrados", len(predios)) }</span>
@@ -39,11 +39,16 @@ templ PrediosList(predios []sqlc.Predio) {
 								</td>
 								<td class="col-secundaria">{ p.Direccion }</td>
 								<td class="col-acciones texto-derecha">
-									<form action={ templ.SafeURL(fmt.Sprintf("/predios/eliminar?id=%d", p.IDPredio)) } method="POST" class="form-inline">
-										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar este predio?');">
-											Eliminar
+										<button 
+												type="submit" 
+												hx-delete={ fmt.Sprintf("/predios?id=%d", p.IDPredio) }
+												hx-target="closest tr" 
+												hx-swap="outerHTML"
+												hx-confirm="¿Seguro que deseas eliminar esta disciplina deportiva?"
+												class="btn-eliminar"
+										>
+												Eliminar
 										</button>
-									</form>
 								</td>
 							</tr>
 						}
