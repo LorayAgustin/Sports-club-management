@@ -55,7 +55,7 @@ templ CategoriasList(categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
 									<button
 										type="button"
 										class="btn-eliminar"
-										hx-delete={ fmt.Sprintf("/categorias/eliminar?id=%d", c.IDCategoria) }
+										hx-delete={ fmt.Sprintf("/categorias?id=%d", c.IDCategoria) }
 										hx-target="closest tr"
 										hx-swap="outerHTML"
 										hx-confirm="¿Estás seguro de eliminar esta categoría?"

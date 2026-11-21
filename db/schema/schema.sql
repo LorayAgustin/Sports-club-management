@@ -28,8 +28,9 @@ CREATE TABLE predios (
 
 CREATE TABLE categorias (
     id_Categoria SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE,
-    id_Deporte INT NOT NULL REFERENCES deportes(id_Deporte) ON DELETE CASCADE
+    nombre VARCHAR(100) NOT NULL,
+    id_Deporte INT NOT NULL REFERENCES deportes(id_Deporte) ON DELETE CASCADE,
+    CONSTRAINT uq_categoria_deporte UNIQUE (nombre, id_Deporte) -- Restricción compuesta
 );
 
 CREATE TABLE inscripciones (
