@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	sqlc "cl_gst/db/sqlc"
 	"cl_gst/logic"
@@ -21,32 +20,13 @@ func NewPredioHandler(queries *sqlc.Queries) *PredioHandler {
 
 // Handler central para la ruta /deportes (despacha GET o POST según el método HTTP)
 func (h *PredioHandler) Handle(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/predios")
-	path = strings.TrimPrefix(path, "/")
-
-	// Ruta base: /predios
-	if path == "" {
-		switch r.Method {
-		case http.MethodGet:
-			h.Index(w, r)
-		case http.MethodPost:
-			h.Create(w, r)
-		default:
-			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		}
-		return
-	}
-
-	// Ruta con ID: /predios/{id}
-	id, err := strconv.Atoi(path)
-	if err != nil {
-		http.Error(w, "ID de predio inválido", http.StatusBadRequest)
-		return
-	}
-
 	switch r.Method {
+	case http.MethodGet:
+		h.Index(w, r)
+	case http.MethodPost:
+		h.Create(w, r)
 	case http.MethodDelete:
-		h.Delete(w, r, int32(id))
+		h.Delete(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -134,11 +114,17 @@ func (h *PredioHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 // DELETE /predios/{id}: Borra en BD y devuelve 200 OK vacío para que HTMX remueva la fila
-func (h *PredioHandler) Delete(w http.ResponseWriter, r *http.Request, id int32) {
-	err := h.queries.DeletePredio(r.Context(), id)
+func (h *PredioHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id == 0 {
+		http.Error(w, "ID de predio no válido", http.StatusBadRequest)
+		return
+	}
+	err = h.queries.DeletePredio(r.Context(), int32(id))
 	if err != nil {
-		log.Printf("Error al eliminar predio ID %d: %v", id, err)
-		http.Error(w, "Error al eliminar de la base de datos", http.StatusInternalServerError)
+		log.Printf("Error al eliminar predio: %v", err)
+		http.Error(w, "Error al eliminar en la base de datos", http.StatusInternalServerError)
 		return
 	}
 

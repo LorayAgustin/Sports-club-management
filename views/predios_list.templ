@@ -40,10 +40,11 @@ templ PrediosList(predios []sqlc.Predio) {
 								<td class="col-secundaria">{ p.Direccion }</td>
 								<td class="col-acciones texto-derecha">
 										<button 
-												hx-delete={ fmt.Sprintf("/predios/%d", p.IDPredio) }
-												hx-target="closest li" 
+												type="submit" 
+												hx-delete={ fmt.Sprintf("/predios?id=%d", p.IDPredio) }
+												hx-target="closest tr" 
 												hx-swap="outerHTML"
-												hx-confirm={ fmt.Sprintf("¿Seguro que deseas eliminar el predio '%s'?", p.Nombre) }
+												hx-confirm="¿Seguro que deseas eliminar esta disciplina deportiva?"
 												class="btn-eliminar"
 										>
 												Eliminar
