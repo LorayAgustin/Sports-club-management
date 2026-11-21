@@ -52,11 +52,16 @@ templ CategoriasList(categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
 									</span>
 								</td>
 								<td class="col-acciones texto-derecha">
-									<form action={ templ.SafeURL(fmt.Sprintf("/categorias/eliminar?id=%d", c.IDCategoria)) } method="POST" class="form-inline">
-										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta categoría?');">
-											Eliminar
-										</button>
-									</form>
+									<button
+										type="button"
+										class="btn-eliminar"
+										hx-delete={ fmt.Sprintf("/categorias/eliminar?id=%d", c.IDCategoria) }
+										hx-target="closest tr"
+										hx-swap="outerHTML"
+										hx-confirm="¿Estás seguro de eliminar esta categoría?"
+									>
+										Eliminar
+									</button>
 								</td>
 							</tr>
 						}
