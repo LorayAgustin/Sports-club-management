@@ -6,7 +6,7 @@ import (
 )
 
 // InscripcionForm renderiza el formulario de alta de inscripción
-templ InscripcionForm(socios []sqlc.Socio, categorias []sqlc.Categoria) {
+templ InscripcionForm(socios []sqlc.Socio, usuarios []sqlc.Usuario, categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
 	<div id="inscripcion-form-container" class="form-container">
 		<div class="form-header">
 			<h2>Agregar Nueva Inscripción</h2>
@@ -20,7 +20,7 @@ templ InscripcionForm(socios []sqlc.Socio, categorias []sqlc.Categoria) {
 					<option value="" disabled selected>Seleccione un socio...</option>
 					for _, s := range socios {
 						<option value={ fmt.Sprintf("%d", s.IDSocio) }>
-							{ fmt.Sprintf("DNI: %s (Socio #%d)", s.Dni, s.IDSocio) }
+							{ fmt.Sprintf("DNI: %s - %s - #%d", s.Dni, ObtenerNombreUsuario(s.IDUsuario, usuarios), s.IDSocio) }
 						</option>
 					}
 				</select>
@@ -31,7 +31,8 @@ templ InscripcionForm(socios []sqlc.Socio, categorias []sqlc.Categoria) {
 				<select id="id-categoria" name="id_categoria" required class="select-estilizado">
 					<option value="" disabled selected>Seleccione una categoría...</option>
 					for _, c := range categorias {
-						<option value={ fmt.Sprintf("%d", c.IDCategoria) }>{ c.Nombre }</option>
+						<option value={ fmt.Sprintf("Deporte: %s - %s - #%d", ObtenerNombreDeporte(c.IDDeporte, deportes), c.Nombre, c.IDCategoria) }>
+						</option>
 					}
 				</select>
 			</div>
@@ -71,8 +72,8 @@ templ InscripcionForm(socios []sqlc.Socio, categorias []sqlc.Categoria) {
 	</div>
 }
 
-templ InscripcionFormOOB(socios []sqlc.Socio, categorias []sqlc.Categoria) { 
+templ InscripcionFormOOB(socios []sqlc.Socio, usuarios []sqlc.Usuario, categorias []sqlc.Categoria, deportes []sqlc.Deporte) { 
 	<div hx-swap-oob="outerHTML:#inscripcion-form-container"> 
-		@InscripcionForm(socios, categorias) 
+		@InscripcionForm(socios, usuarios, categorias, deportes) 
 	</div> 
 }

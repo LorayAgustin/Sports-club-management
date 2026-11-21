@@ -5,31 +5,9 @@ import (
 	sqlc "cl_gst/db/sqlc"
 )
 
-// Resolver la obtencion del nombre de la Categoria
-func obtenerNombreCategoria(idCat int32, categorias []sqlc.Categoria) string { 
-	for _, c := range categorias { 
-		if c.IDCategoria == idCat { 
-			// Nombre e ID entre paréntesis 
-			return fmt.Sprintf("%s (#%d)", c.Nombre, c.IDCategoria) 
-		} 
-	} 
-	return "Sin categoría" 
-}
-
-// Resolver la obtencion del nombre del Predio
-func obtenerNombrePredio(idPredio int32, predios []sqlc.Predio) string { 
-	for _, p := range predios { 
-		if p.IDPredio == idPredio { 
-			// Nombre e ID entre paréntesis
-			return fmt.Sprintf("%s (#%d)", p.Nombre, p.IDPredio) 
-		} 
-	} 
-	return "Sin predio" 
-}
-
 // PracticasList renderiza el listado de prácticas deportivas
 // PracticasList renderiza el listado de horarios de prácticas con Empty State y badges
-templ PracticasList(practicas []sqlc.Practica, categorias []sqlc.Categoria, predios []sqlc.Predio) {
+templ PracticasList(practicas []sqlc.Practica, categorias []sqlc.Categoria, deportes []sqlc.Deporte, predios []sqlc.Predio) {
 	<div id="practicas-list-container" class="listado-container">
 		<div class="listado-header">
 			<h2>Horarios de Prácticas</h2>
@@ -59,8 +37,8 @@ templ PracticasList(practicas []sqlc.Practica, categorias []sqlc.Categoria, pred
 						for _, p := range practicas {
 							<tr>
 								<td><span class="id-tag">#{ fmt.Sprintf("%d", p.IDPractica) }</span></td>
-								<td><span class="badge badge-admin">{obtenerNombreCategoria(p.IDCategoria, categorias)}</span></td>
-								<td><span class="badge badge-user">{obtenerNombrePredio(p.IDPredio, predios)}</span></td>
+								<td><span class="badge badge-admin">{ObtenerDetalleCategoria(p.IDCategoria, categorias, deportes)}</span></td>
+								<td><span class="badge badge-user">{ObtenerNombrePredio(p.IDPredio, predios)}</span></td>
 								<td class="col-destacada">{ fmt.Sprintf("%v", p.Diasemana) }</td>
 								<td>
 									<span class="horario-tag">

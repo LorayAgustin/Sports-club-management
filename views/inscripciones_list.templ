@@ -6,7 +6,7 @@ import (
 )
 
 // InscripcionesList renderiza el listado de inscripciones del club
-templ InscripcionesList(inscripciones []sqlc.Inscripcione) {
+templ InscripcionesList(inscripciones []sqlc.Inscripcione, socios []sqlc.Socio, usuarios []sqlc.Usuario, categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
 	<div id="inscripciones-list-container" class="listado-container">
 		<div class="listado-header">
 			<h2>Inscripciones Registradas</h2>
@@ -37,8 +37,8 @@ templ InscripcionesList(inscripciones []sqlc.Inscripcione) {
 						for _, i := range inscripciones {
 							<tr>
 								<td><span class="id-tag">#{ fmt.Sprintf("%d", i.IDInscripcion) }</span></td>
-								<td><span class="badge badge-user">Socio #{ fmt.Sprintf("%d", i.IDSocio) }</span></td>
-								<td><span class="badge badge-admin">Cat. #{ fmt.Sprintf("%d", i.IDCategoria) }</span></td>
+								<td><span class="badge badge-user">{ObtenerDetalleSocio(i.IDSocio, socios, usuarios)}</span></td>
+								<td><span class="badge badge-admin">{ObtenerDetalleCategoria(i.IDCategoria, categorias, deportes)}</span></td>
 								<td class="col-secundaria">{ i.Fechainscripcion.Format("02/01/2006") }</td>
 								<td>
 									if i.Estado == "Activa" {

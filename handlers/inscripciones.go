@@ -54,6 +54,13 @@ func (h *InscripcionHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	usuarios, err := h.queries.ListUsuarios(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener usuarios: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+
 	categorias, err := h.queries.ListCategorias(r.Context())
 	if err != nil {
 		log.Printf("Error al obtener categorías: %v", err)
@@ -61,7 +68,14 @@ func (h *InscripcionHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := views.InscripcionesPage("Gestión del Club - Inscripciones", inscripciones, socios, categorias).Render(r.Context(), w); err != nil {
+	deportes, err := h.queries.ListDeportes(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener deportes: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+
+	if err := views.InscripcionesPage("Gestión del Club - Inscripciones", inscripciones, socios, usuarios, categorias, deportes).Render(r.Context(), w); err != nil {
 		log.Printf("Error al renderizar plantilla: %v", err)
 		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
 	}
@@ -138,22 +152,39 @@ func (h *InscripcionHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
 		return
 	}
-	if err := views.InscripcionesList(inscripciones).Render(r.Context(), w); err != nil {
-		log.Printf("Error al renderizar listado de inscripciones: %v", err)
-		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
+
+	usuarios, err := h.queries.ListUsuarios(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener lista de usuarios: %v", err)
+		http.Error(w, "Error al actualizar la lista", http.StatusInternalServerError)
 		return
 	}
+
 	socios, err := h.queries.ListSocios(r.Context())
 	if err != nil {
 		log.Printf("Error al obtener socios para reseteo OOB: %v", err)
 		return
 	}
+
 	categorias, err := h.queries.ListCategorias(r.Context())
 	if err != nil {
 		log.Printf("Error al obtener categorías para reseteo OOB: %v", err)
 		return
 	}
-	if err := views.InscripcionFormOOB(socios, categorias).Render(r.Context(), w); err != nil {
+
+	deportes, err := h.queries.ListDeportes(r.Context())
+	if err != nil {
+		log.Printf("Error al consultar deportes actualizados: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+
+	if err := views.InscripcionesList(inscripciones, socios, usuarios, categorias, deportes).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar listado de inscripciones: %v", err)
+		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
+		return
+	}
+	if err := views.InscripcionFormOOB(socios, usuarios, categorias, deportes).Render(r.Context(), w); err != nil {
 		log.Printf("Error al renderizar formulario OOB de inscripción: %v", err)
 	}
 }

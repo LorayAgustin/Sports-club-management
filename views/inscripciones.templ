@@ -5,11 +5,11 @@ import (
 )
 
 // InscripcionesPage recibe el título, las inscripciones y las listas para los desplegables del formulario
-templ InscripcionesPage(title string, inscripciones []sqlc.Inscripcione, socios []sqlc.Socio, categorias []sqlc.Categoria) {
-	@Layout(title, InscripcionContent(title, inscripciones, socios, categorias))
+templ InscripcionesPage(title string, inscripciones []sqlc.Inscripcione, socios []sqlc.Socio, usuarios []sqlc.Usuario, categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
+	@Layout(title, InscripcionContent(title, inscripciones, socios, usuarios, categorias, deportes))
 }
 
-templ InscripcionContent(title string, inscripciones []sqlc.Inscripcione, socios []sqlc.Socio, categorias []sqlc.Categoria) {
+templ InscripcionContent(title string, inscripciones []sqlc.Inscripcione, socios []sqlc.Socio, usuarios []sqlc.Usuario, categorias []sqlc.Categoria, deportes []sqlc.Deporte) {
 	<header class="header-principal">
 		<div class="header-contenido">
 			<div>
@@ -23,12 +23,12 @@ templ InscripcionContent(title string, inscripciones []sqlc.Inscripcione, socios
 	<main class="layout-abm">
 		<!-- Tarjeta 1: Formulario de Alta -->
 		<section class="tarjeta-seccion">
-			@InscripcionForm(socios, categorias)
+			@InscripcionForm(socios, usuarios, categorias, deportes)
 		</section>
 
 		<!-- Tarjeta 2: Listado de Inscripciones -->
 		<section class="tarjeta-seccion">
-			@InscripcionesList(inscripciones)
+			@InscripcionesList(inscripciones, socios, usuarios, categorias, deportes)
 		</section>
 	</main>
 }

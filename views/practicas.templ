@@ -5,11 +5,11 @@ import (
 )
 
 // PracticasPage recibe el título, el listado de prácticas y las listas de categorías y predios para el formulario
-templ PracticasPage(title string, practicas []sqlc.Practica, categorias []sqlc.Categoria, predios []sqlc.Predio) {
-	@Layout(title, PracticaContent(title, practicas, categorias, predios))
+templ PracticasPage(title string, practicas []sqlc.Practica, categorias []sqlc.Categoria, deportes []sqlc.Deporte, predios []sqlc.Predio) {
+	@Layout(title, PracticaContent(title, practicas, categorias, deportes, predios))
 }
 
-templ PracticaContent(title string, practicas []sqlc.Practica, categorias []sqlc.Categoria, predios []sqlc.Predio) {
+templ PracticaContent(title string, practicas []sqlc.Practica, categorias []sqlc.Categoria, deportes []sqlc.Deporte, predios []sqlc.Predio) {
 	<header class="header-principal">
 		<div class="header-contenido">
 			<div>
@@ -23,12 +23,12 @@ templ PracticaContent(title string, practicas []sqlc.Practica, categorias []sqlc
 	<main class="layout-abm">
 		<!-- Tarjeta 1: Formulario de Alta -->
 		<section class="tarjeta-seccion">
-			@PracticaForm(categorias, predios)
+			@PracticaForm(categorias, deportes, predios)
 		</section>
 
 		<!-- Tarjeta 2: Listado de Prácticas -->
 		<section class="tarjeta-seccion">
-			@PracticasList(practicas, categorias, predios)
+			@PracticasList(practicas, categorias, deportes, predios)
 		</section>
 	</main>
 }
