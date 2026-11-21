@@ -7,13 +7,19 @@ import (
 
 // CategoriaForm renderiza el formulario de alta de categoría
 templ CategoriaForm(deportes []sqlc.Deporte) {
-	<div class="form-container">
+	<div class="form-container" id="categoria-form-container">
 		<div class="form-header">
 			<h2>Agregar Nueva Categoría</h2>
 			<p class="descripcion-seccion">Definí el nombre de la división y vinculala a un deporte.</p>
 		</div>
 
-		<form id="form-categoria" class="form-flex" action="/categorias" method="POST">
+		<form
+			id="form-categoria"
+			class="form-flex"
+			hx-post="/categorias"
+			hx-target="#categorias-list-container"
+			hx-swap="outerHTML"
+		>
 			<div class="campo-grupo">
 				<label for="nombre-categoria">Nombre de la Categoría</label>
 				<input
@@ -40,5 +46,12 @@ templ CategoriaForm(deportes []sqlc.Deporte) {
 				+ Agregar Categoría
 			</button>
 		</form>
+	</div>
+}
+
+// CategoriaFormOOB genera el fragmento Out-of-Band para resetear el formulario (Punto 3 del TP6)
+templ CategoriaFormOOB(deportes []sqlc.Deporte) {
+	<div hx-swap-oob="outerHTML:#categoria-form-container">
+		@CategoriaForm(deportes)
 	</div>
 }

@@ -25,6 +25,8 @@ func (h *CategoriaHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		h.Index(w, r)
 	case http.MethodPost:
 		h.Create(w, r)
+	case http.MethodDelete:
+		h.Delete(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -59,11 +61,6 @@ func (h *CategoriaHandler) Index(w http.ResponseWriter, r *http.Request) {
 
 // POST /categorias: Guarda una nueva categoría y redirige a /categorias
 func (h *CategoriaHandler) Create(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
@@ -103,6 +100,54 @@ func (h *CategoriaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirección PRG a la lista de categorías
-	http.Redirect(w, r, "/categorias", http.StatusSeeOther)
+	categorias, err := h.queries.ListCategorias(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener categorías actualizadas: %v", err)
+		http.Error(w, "Error al actualizar la lista", http.StatusInternalServerError)
+		return
+	}
+
+	deportes, err := h.queries.ListDeportes(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener deportes: %v", err)
+		http.Error(w, "Error al actualizar la lista", http.StatusInternalServerError)
+		return
+	}
+
+	// Devuelve la lista actualizada a #categorias-list-container
+	if err := views.CategoriasList(categorias, deportes).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar lista: %v", err)
+		http.Error(w, "Error interno al generar respuesta", http.StatusInternalServerError)
+		return
+	}
+
+	// Devuelve el formulario limpio OOB a #categoria-form-container
+	if err := views.CategoriaFormOOB(deportes).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar formulario OOB: %v", err)
+	}
+}
+
+// DELETE
+func (h *CategoriaHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		http.Error(w, "El ID de la categoría es obligatorio", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	err = h.queries.DeleteCategoria(r.Context(), int32(id))
+	if err != nil {
+		log.Printf("Error al eliminar categoría: %v", err)
+		http.Error(w, "Error al eliminar en la base de datos", http.StatusInternalServerError)
+		return
+	}
+
+	// Responder con 200 OK y cuerpo vacío para que HTMX reemplace 'closest tr' por nada (elimina la fila)
+	w.WriteHeader(http.StatusOK)
 }
