@@ -26,6 +26,8 @@ func (h *PracticaHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		h.Index(w, r)
 	case http.MethodPost:
 		h.Create(w, r)
+	case http.MethodDelete:
+		h.Delete(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -144,6 +146,44 @@ func (h *PracticaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirección PRG a la lista de prácticas
-	http.Redirect(w, r, "/practicas", http.StatusSeeOther)
+	practicas, err := h.queries.ListPracticas(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener prácticas actualizadas: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+	if err := views.PracticasList(practicas).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar listado de prácticas: %v", err)
+		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
+		return
+	}
+	categorias, err := h.queries.ListCategorias(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener categorías para reseteo OOB: %v", err)
+		return
+	}
+	predios, err := h.queries.ListPredios(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener predios para reseteo OOB: %v", err)
+		return
+	}
+	if err := views.PracticaFormOOB(categorias, predios).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar formulario OOB de práctica: %v", err)
+	}
+}
+
+func (h *PracticaHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id <= 0 {
+		http.Error(w, "ID de práctica no válido", http.StatusBadRequest)
+		return
+	}
+	err = h.queries.DeletePractica(r.Context(), int32(id))
+	if err != nil {
+		log.Printf("Error al eliminar práctica: %v", err)
+		http.Error(w, "Error al eliminar en la base de datos", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }

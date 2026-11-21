@@ -46,11 +46,9 @@ templ PracticasList(practicas []sqlc.Practica) {
 									</span>
 								</td>
 								<td class="col-acciones texto-derecha">
-									<form action={ templ.SafeURL(fmt.Sprintf("/practicas/eliminar?id=%d", p.IDPractica)) } method="POST" class="form-inline">
-										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar este horario de práctica?');">
-											Eliminar
-										</button>
-									</form>
+									<button type="submit" class="btn-eliminar" hx-delete={ fmt.Sprintf("/practicas?id=%d", p.IDPractica) } hx-target="closest tr" hx-swap="outerHTML" hx-confirm="¿Seguro que deseas eliminar este horario de práctica?">
+										Eliminar
+									</button>
 								</td>
 							</tr>
 						}

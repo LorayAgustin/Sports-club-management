@@ -7,13 +7,13 @@ import (
 
 // PracticaForm renderiza el formulario de alta de práctica
 templ PracticaForm(categorias []sqlc.Categoria, predios []sqlc.Predio) {
-	<div class="form-container">
+	<div id="practica-form-container" class="form-container">
 		<div class="form-header">
 			<h2>Agregar Nueva Práctica</h2>
 			<p class="descripcion-seccion">Definí la categoría, el predio y la franja horaria de entrenamiento.</p>
 		</div>
 
-		<form id="form-practica" class="form-flex" action="/practicas" method="POST">
+		<form id="form-practica" class="form-flex" hx-post="/practicas" hx-target="#practicas-list-container" hx-swap="outerHTML">
 			<div class="campo-grupo">
 				<label for="id-categoria">Categoría</label>
 				<select id="id-categoria" name="id_categoria" required class="select-estilizado">
@@ -69,8 +69,14 @@ templ PracticaForm(categorias []sqlc.Categoria, predios []sqlc.Predio) {
 			</div>
 
 			<button type="submit" id="agregarPractica" class="btn-primario">
-				+ Agregar Práctica
+				{ "+ Agregar Práctica" }
 			</button>
 		</form>
 	</div>
+}
+
+templ PracticaFormOOB(categorias []sqlc.Categoria, predios []sqlc.Predio) {
+	<div hx-swap-oob="outerHTML:#practica-form-container"> 
+		@PracticaForm(categorias, predios) 
+	</div> 
 }
