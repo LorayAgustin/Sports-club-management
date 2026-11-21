@@ -107,13 +107,13 @@ Sports-club-management/
 
 ## Arquitectura
 
-La aplicación renderiza el HTML **en el servidor**: el navegador envía formularios HTML estándar y el servidor responde con páginas generadas con **Templ**. Ya no se expone una API REST con JSON.
+La aplicación mantiene el renderizado **en el servidor** con **Templ**, pero incorpora **HTMX** en el cliente para gestionar las interacciones de forma asíncrona (`GET`, `POST` y `DELETE`). En lugar de recargar páginas completas tras cada acción, el servidor devuelve **fragmentos parciales de HTML** (listados actualizados y formularios *Out-of-Band*) que HTMX inyecta directamente en el DOM.
 
 ```
-Navegador ──HTTP (GET / POST de formularios)──▶ Handlers ──▶ sqlc ──▶ PostgreSQL
+Navegador (HTMX) ──HTTP (GET / POST / DELETE)──▶ Handlers ──▶ sqlc ──▶ PostgreSQL
     ▲                                              │  │
     │                                              │  └──▶ Logic (validaciones)
-    └──────────────── HTML (Templ) ◀───────────────┘
+    └──────────────── Páginas o Fragmentos HTML (Templ) ◀───────────────┘
 ```
 
 ### Capa de Lógica de Negocio (`/logic`)
@@ -121,17 +121,21 @@ Navegador ──HTTP (GET / POST de formularios)──▶ Handlers ──▶ sql
 * **Desacoplamiento:** No utiliza `http.Request` ni `http.ResponseWriter`, por lo que puede probarse con tests unitarios de Go sin levantar un servidor. Cuando una validación necesita consultar la base de datos (ej. unicidad del nombre de usuario) lo hace a través de una interfaz (`UserDB`), no de una dependencia concreta.
 
 ### Capa de Handlers HTTP (`/handlers`)
-* **Responsabilidad:** Actúan como **controladores web**: reciben la petición, consultan o modifican la base de datos y devuelven HTML renderizado con Templ. Cada handler recibe en su constructor el cliente `*sqlc.Queries`.
-* **Flujo de un `GET`** (ej. `/usuarios`):
+- **Responsabilidad:** Actúan como **controladores web**: reciben la petición, consultan o modifican la base de datos y devuelven páginas o fragmentos HTML renderizados con Templ. Cada handler recibe en su constructor el cliente `*sqlc.Queries`.
+- **Flujo de un `GET`** (ej. `/usuarios`):
   1. Valida que la ruta sea la esperada.
   2. Consulta los datos necesarios con las funciones generadas por `sqlc` (`ListUsuarios`, y en las entidades con relaciones también `ListSocios`, `ListCategorias`, `ListPredios`, `ListDeportes`).
   3. Renderiza la página completa con Templ directamente sobre la respuesta (`.Render(r.Context(), w)`).
-* **Flujo de un `POST`** (ej. alta de un usuario):
+- **Flujo de un `POST`** (alta reactiva sin recarga):
   1. Lee el formulario (`r.ParseForm()` / `r.FormValue()`) y convierte los tipos (fechas, enteros, horas).
-  2. Valida con la capa `logic`.
-  3. Persiste con la consulta `Create...` generada por `sqlc`.
-  4. Responde con una redirección **`303 See Other`** a la página de la entidad (patrón Post/Redirect/Get), que evita reenvíos del formulario al refrescar el navegador.
-* **Códigos de estado:** `400 Bad Request` (formulario inválido o error de validación), `405 Method Not Allowed` (método distinto de `GET`/`POST`), `404 Not Found` (ruta inexistente) y `500 Internal Server Error` (fallo de base de datos o de renderizado). Los errores se devuelven como texto plano.
+  2. Valida los datos con la capa `logic`.
+  3. Persiste el registro con la consulta `Create...` generada por `sqlc` y vuelve a consultar la lista actualizada.
+  4. Responde con **`200 OK`** enviando un **Doble Swap** de fragmentos HTML: primero el componente de listado actualizado (`*_list.templ`) para reemplazar el contenedor destino, y luego el formulario limpio con `hx-swap-oob="true"` (`*FormOOB`) para restablecer los campos automáticamente.
+- **Flujo de un `DELETE`** (baja dinámica por fila, ej. `/usuarios/{id}`):
+  1. Extrae y valida el identificador del registro desde la URL.
+  2. Ejecuta la consulta `Delete...` generada por `sqlc`.
+  3. Responde con **`200 OK` y cuerpo vacío**, permitiendo que HTMX elimine la fila (`hx-target="closest tr"`, `hx-swap="outerHTML"`) directamente del DOM.
+- **Códigos de estado:** `200 OK` (páginas o fragmentos renderizados correctamente), `400 Bad Request` (formulario inválido, ID malformado o error de validación), `405 Method Not Allowed` (método distinto de `GET`, `POST` o `DELETE`), `404 Not Found` (ruta inexistente) y `500 Internal Server Error` (fallo de base de datos o de renderizado). Los errores se devuelven como texto plano.
 
 ### Capa de Vistas (`/views`: Templ)
 * **Templ:** cada archivo `.templ` define componentes HTML tipados en Go. `templ generate` los compila a archivos `*_templ.go`, por lo que los errores de plantilla se detectan en tiempo de compilación.
@@ -140,6 +144,26 @@ Navegador ──HTTP (GET / POST de formularios)──▶ Handlers ──▶ sql
 * **Sin JavaScript:** no hay archivos `.js` en el proyecto; el directorio `static/` (que contiene únicamente `styles.css`); toda la interactividad se resuelve de forma declarativa importando HTMX en `layout.templ`.
 
 ---
+
+## Interfaces Dinámicas con HTMX (TP6)
+
+En esta etapa se evolucionó la aplicación renderizada en el servidor (**Go + Templ**) hacia una experiencia interactiva tipo **SPA (Single Page Application)** mediante la integración de **HTMX**, eliminando las recargas completas de página sin escribir código JavaScript personalizado en el cliente.
+
+### Arquitectura y Funcionalidades Implementadas
+
+Todas las entidades del dominio (**Usuarios, Socios, Deportes, Predios, Categorías, Prácticas e Inscripciones**) fueron adaptadas al patrón de intercambio de fragmentos HTML:
+
+* **Integración Global de HTMX:** Incorporación de la librería en el componente base (`views/layout.templ`) para habilitar atributos declarativos en todas las vistas.
+* **Altas Reactivas sin Recarga (`POST`):**
+  * Los formularios (`views/*_form.templ`) utilizan `hx-post`, `hx-target` y `hx-swap="outerHTML"` para enviar los datos de forma asíncrona.
+  * Los handlers en Go (`handlers/`) reemplazaron las redirecciones HTTP (`http.Redirect`) por el renderizado parcial exclusivo del listado actualizado (`views/*_list.templ`).
+* **Limpieza Automática de Formularios (Out-of-Band Swaps):**
+  * Tras cada inserción exitosa, los endpoints `POST` realizan un *Doble Swap*: devuelven en la misma respuesta la lista actualizada y un componente de formulario vacío con `hx-swap-oob="true"`, restableciendo los campos automáticamente.
+* **Bajas Dinámicas por Fila (`DELETE`):**
+  * Incorporación de consultas de borrado en `sqlc` (`db/queries/`) y endpoints `DELETE /{entidad}/{id}` que retornan `200 OK` con cuerpo vacío.
+  * Cada fila de los listados incluye un botón configurado con `hx-delete`, `hx-target="closest tr"`, `hx-swap="outerHTML"` y `hx-confirm`, eliminando el registro del DOM al instante previa confirmación.
+* **Interfaz Administrativa Unificada:**
+  * Maquetación responsiva basada en CSS Grid y Flexbox puro (`static/styles.css`), con estados vacíos (*empty states*), contadores dinámicos y etiquetas visuales (*badges*) de estado y rol.
 
 ## Rutas de la aplicación
 
