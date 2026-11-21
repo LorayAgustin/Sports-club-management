@@ -8,7 +8,7 @@ templ SocioForm() {
 			<p class="descripcion-seccion">Vinculá un usuario existente al padrón del club mediante su DNI.</p>
 		</div>
 
-		<form id="form-socio" class="form-flex" action="/socios" method="POST" hx-post="/socios" hx-target="#socios-list-container" hx-swap="outerHTML">
+		<form id="form-socio" class="form-flex" hx-post="/socios" hx-target="#socios-list-container" hx-swap="outerHTML">
 			<div class="campo-grupo">
 				<label for="id_usuario-socio">ID de Usuario</label>
 				<input
