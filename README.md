@@ -2,7 +2,7 @@
 
 Aplicación web para administrar la información de un club deportivo: usuarios, socios, deportes, predios, categorías, inscripciones y prácticas.
 
-Este repositorio contiene la resolución de la entrega final **TP5: Aplicación web con vistas renderizadas desde el servidor (Templ)**.
+Este repositorio contiene la resolución del **TP6: Interfaces dinámicas con HTMX**, una aplicación web renderizada desde el servidor (Go + Templ) con actualización parcial de vistas sin recargas completas de página.
 
 > **Restricción de la entrega:** el proyecto **no contiene archivos JavaScript (`.js`)**. Toda la interfaz se genera en el servidor con plantillas **Templ** y los estilos se resuelven con hojas CSS estáticas. Los archivos `*.js` están excluidos en el `.gitignore`.
 
@@ -137,7 +137,7 @@ Navegador ──HTTP (GET / POST de formularios)──▶ Handlers ──▶ sql
 * **Templ:** cada archivo `.templ` define componentes HTML tipados en Go. `templ generate` los compila a archivos `*_templ.go`, por lo que los errores de plantilla se detectan en tiempo de compilación.
 * **Composición:** `layout.templ` define la estructura base (`<head>`, hoja de estilos `styles-dark.css` y `<body>`), y cada página lo envuelve con su contenido. Los formularios (`*_form.templ`) y los listados (`*_list.templ`) son componentes independientes que cada página compone.
 * **Escape automático:** Templ escapa los valores interpolados, lo que previene inyección de HTML/XSS.
-* **Sin JavaScript:** no hay archivos `.js` en el proyecto; el directorio `static/` contiene únicamente hojas de estilo.
+* **Sin JavaScript:** no hay archivos `.js` en el proyecto; el directorio `static/` (que contiene únicamente `styles.css`); toda la interactividad se resuelve de forma declarativa importando HTMX en `layout.templ`.
 
 ---
 
@@ -147,17 +147,24 @@ Todas las rutas de entidades aceptan `GET` (formulario de alta + listado) y `POS
 
 | Método | Ruta | Descripción | Respuesta |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/` | Menú principal de navegación | Página HTML |
-| **GET / POST** | `/usuarios` | Gestión de usuarios | `GET`: página HTML · `POST`: `303` a `/usuarios` |
-| **GET / POST** | `/socios` | Gestión de socios | `GET`: página HTML · `POST`: `303` a `/socios` |
-| **GET / POST** | `/deportes` | Gestión de deportes | `GET`: página HTML · `POST`: `303` a `/deportes` |
-| **GET / POST** | `/predios` | Gestión de predios / sedes | `GET`: página HTML · `POST`: `303` a `/predios` |
-| **GET / POST** | `/categorias` | Gestión de categorías | `GET`: página HTML · `POST`: `303` a `/categorias` |
-| **GET / POST** | `/inscripciones` | Gestión de inscripciones | `GET`: página HTML · `POST`: `303` a `/inscripciones` |
-| **GET / POST** | `/practicas` | Gestión de prácticas | `GET`: página HTML · `POST`: `303` a `/practicas` |
+**GET** | `/` | Menú principal de navegación | Página HTML completa |
+| **GET / POST** | `/usuarios` | Gestión de usuarios | `GET`: página HTML · `POST`: `200 OK` (lista actualizada + form OOB) |
+| **DELETE** | `/usuarios/{id}` | Elimina un usuario | `200 OK` (cuerpo vacío para remover la fila) |
+| **GET / POST** | `/socios` | Gestión de socios | `GET`: página HTML · `POST`: `200 OK` (lista actualizada + form OOB) |
+| **DELETE** | `/socios/{id}` | Elimina un socio | `200 OK` (cuerpo vacío para remover la fila) |
+| **GET / POST** | `/deportes` | Gestión de deportes | `GET`: página HTML · `POST`: `200 OK` (lista actualizada + form OOB) |
+| **DELETE** | `/deportes/{id}` | Elimina un deporte | `200 OK` (cuerpo vacío para remover la fila) |
+| **GET / POST** | `/predios` | Gestión de predios / sedes | `GET`: página HTML · `POST`: `200 OK` (lista actualizada + form OOB) |
+| **DELETE** | `/predios/{id}` | Elimina un predio | `200 OK` (cuerpo vacío para remover la fila) |
+| **GET / POST** | `/categorias` | Gestión de categorías | `GET`: página HTML · `POST`: `200 OK` (lista actualizada + form OOB) |
+| **DELETE** | `/categorias/{id}` | Elimina una categoría | `200 OK` (cuerpo vacío para remover la fila) |
+| **GET / POST** | `/inscripciones` | Gestión de inscripciones | `GET`: página HTML · `POST`: `200 OK` (lista actualizada + form OOB) |
+| **DELETE** | `/inscripciones/{id}` | Elimina una inscripción | `200 OK` (cuerpo vacío para remover la fila) |
+| **GET / POST** | `/practicas` | Gestión de prácticas | `GET`: página HTML · `POST`: `200 OK` (lista actualizada + form OOB) |
+| **DELETE** | `/practicas/{id}` | Elimina una práctica | `200 OK` (cuerpo vacío para remover la fila) |
 | **GET** | `/static/*` | Archivos estáticos | Archivo CSS |
 
-Si el `POST` falla por validación o por un error de la base de datos, la respuesta es un `400` o `500` con el mensaje en texto plano.
+Si el `POST` o `DELETE` falla por validación o por un error de la base de datos, la respuesta es un `400` o `500` con el mensaje en texto plano.
 
 ### Campos del formulario de alta (`POST`, `application/x-www-form-urlencoded`)
 
