@@ -12,14 +12,15 @@ func ObtenerNombreDeporte(idDeporte int32, deportes []sqlc.Deporte) string {
 			return d.Nombre
 		}
 	}
-	return fmt.Sprintf("Usuario #%d", idDeporte)
+	return fmt.Sprintf("Deporte #%d", idDeporte)
 }
 
 // ObtenerNombreCategoria busca el detalle descriptivo de una categoría por su ID
 func ObtenerDetalleCategoria(idCat int32, categorias []sqlc.Categoria, deportes []sqlc.Deporte) string {
 	for _, c := range categorias {
 		if c.IDCategoria == idCat {
-			return fmt.Sprintf("Deporte: %s - %s - #%d", ObtenerNombreDeporte(c.IDDeporte, deportes), c.Nombre, c.IDCategoria)
+			nombreDep := ObtenerNombreDeporte(c.IDDeporte, deportes)
+			return fmt.Sprintf("Deporte: %s - %s - #%d", nombreDep, c.Nombre, c.IDCategoria)
 		}
 	}
 	return "Sin categoría"
@@ -29,7 +30,7 @@ func ObtenerDetalleCategoria(idCat int32, categorias []sqlc.Categoria, deportes 
 func ObtenerNombrePredio(idPredio int32, predios []sqlc.Predio) string {
 	for _, p := range predios {
 		if p.IDPredio == idPredio {
-			return fmt.Sprintf("%s (#%d)", p.Nombre, p.IDPredio)
+			return fmt.Sprintf("%s - #%d", p.Nombre, p.IDPredio)
 		}
 	}
 	return "Sin predio"

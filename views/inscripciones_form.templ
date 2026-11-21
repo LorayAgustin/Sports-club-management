@@ -20,7 +20,7 @@ templ InscripcionForm(socios []sqlc.Socio, usuarios []sqlc.Usuario, categorias [
 					<option value="" disabled selected>Seleccione un socio...</option>
 					for _, s := range socios {
 						<option value={ fmt.Sprintf("%d", s.IDSocio) }>
-							{ fmt.Sprintf("DNI: %s - %s - #%d", s.Dni, ObtenerNombreUsuario(s.IDUsuario, usuarios), s.IDSocio) }
+							{ ObtenerDetalleSocio(s.IDSocio, socios, usuarios) }
 						</option>
 					}
 				</select>
@@ -31,7 +31,8 @@ templ InscripcionForm(socios []sqlc.Socio, usuarios []sqlc.Usuario, categorias [
 				<select id="id-categoria" name="id_categoria" required class="select-estilizado">
 					<option value="" disabled selected>Seleccione una categoría...</option>
 					for _, c := range categorias {
-						<option value={ fmt.Sprintf("Deporte: %s - %s - #%d", ObtenerNombreDeporte(c.IDDeporte, deportes), c.Nombre, c.IDCategoria) }>
+						<option value={ fmt.Sprintf("%d", c.IDCategoria) }>
+							{ ObtenerDetalleCategoria(c.IDCategoria, categorias, deportes)}
 						</option>
 					}
 				</select>

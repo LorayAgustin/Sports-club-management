@@ -19,7 +19,8 @@ templ PracticaForm(categorias []sqlc.Categoria, deportes []sqlc.Deporte, predios
 				<select id="id-categoria" name="id_categoria" required class="select-estilizado">
 					<option value="" disabled selected>Seleccione una categoría...</option>
 					for _, c := range categorias {
-						<option value={ fmt.Sprintf("Deporte: %s - %s - #%d", ObtenerNombreDeporte(c.IDDeporte, deportes), c.Nombre, c.IDCategoria) }>
+						<option value={ fmt.Sprintf("%d", c.IDCategoria) }>
+							{ ObtenerDetalleCategoria(c.IDCategoria, categorias, deportes) }
 						</option>
 					}
 				</select>
