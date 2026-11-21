@@ -36,7 +36,10 @@ templ DeportesList(deportes []sqlc.Deporte) {
 									<span class="icono-tabla">⚽</span> { d.Nombre }
 								</td>
 								<td class="col-acciones texto-derecha">
-										<button type="submit" class="btn-eliminar" hx-delete={ fmt.Sprintf("/deportes?id=%d", d.IDDeporte) } hx-target="closest tr" hx-swap="outerHTML" hx-confirm="¿Seguro que deseas eliminar esta disciplina deportiva?">
+										<button 
+										type="submit" 
+										class="btn-eliminar" 
+										hx-delete={ fmt.Sprintf("/deportes?id=%d", d.IDDeporte) } hx-target="closest tr" hx-swap="outerHTML" hx-confirm="¿Seguro que deseas eliminar esta disciplina deportiva?">
 											Eliminar
 										</button>
 								</td>

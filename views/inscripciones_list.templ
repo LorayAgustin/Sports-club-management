@@ -43,8 +43,6 @@ templ InscripcionesList(inscripciones []sqlc.Inscripcione) {
 								<td>
 									if i.Estado == "Activa" {
 										<span class="badge badge-activo">Activa</span>
-									} else if i.Estado == "Pendiente" {
-										<span class="badge badge-pendiente">Pendiente</span>
 									} else {
 										<span class="badge badge-baja">{ i.Estado }</span>
 									}
