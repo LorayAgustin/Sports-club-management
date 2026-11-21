@@ -28,8 +28,8 @@ func ValidateInscripcion(inscripcion Inscripcion) error {
 			return errors.New("La fecha de baja no puede ser anterior a la fecha de inscripción")
 		}
 	}
-	if inscripcion.Estado != "activo" && inscripcion.Estado != "inactivo" {
-		return errors.New("El estado de la inscripción debe ser \"activo\" o \"inactivo\"")
+	if inscripcion.Estado != "Activa" && inscripcion.Estado != "Inactiva" {
+		return errors.New("El estado de la inscripción debe ser \"Activa\" o \"Inactiva\"")
 	}
 	return nil
 }
