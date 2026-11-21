@@ -55,11 +55,9 @@ templ InscripcionesList(inscripciones []sqlc.Inscripcione) {
 									}
 								</td>
 								<td class="col-acciones texto-derecha">
-									<form action={ templ.SafeURL(fmt.Sprintf("/inscripciones/eliminar?id=%d", i.IDInscripcion)) } method="POST" class="form-inline">
-										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta inscripción?');">
-											Eliminar
-										</button>
-									</form>
+									<button type="submit" class="btn-eliminar" hx-delete={ fmt.Sprintf("/inscripciones?id=%d", i.IDInscripcion) } hx-target="closest tr" hx-swap="outerHTML" hx-confirm="¿Seguro que deseas eliminar esta inscripción?">
+										Eliminar
+									</button>
 								</td>
 							</tr>
 						}

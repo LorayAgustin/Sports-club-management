@@ -7,13 +7,13 @@ import (
 
 // InscripcionForm renderiza el formulario de alta de inscripción
 templ InscripcionForm(socios []sqlc.Socio, categorias []sqlc.Categoria) {
-	<div class="form-container">
+	<div id="inscripcion-form-container" class="form-container">
 		<div class="form-header">
 			<h2>Agregar Nueva Inscripción</h2>
 			<p class="descripcion-seccion">Asigná un socio a una categoría y definí el estado de su inscripción.</p>
 		</div>
 
-		<form id="form-inscripcion" class="form-flex" action="/inscripciones" method="POST">
+		<form id="form-inscripcion" class="form-flex" hx-post="/inscripciones" hx-target="#inscripciones-list-container" hx-swap="outerHTML">
 			<div class="campo-grupo">
 				<label for="id-socio">Socio</label>
 				<select id="id-socio" name="id_socio" required class="select-estilizado">
@@ -65,8 +65,14 @@ templ InscripcionForm(socios []sqlc.Socio, categorias []sqlc.Categoria) {
 			</div>
 
 			<button type="submit" id="agregarInscripcion" class="btn-primario">
-				+ Agregar Inscripción
+				{ "+ Agregar Inscripción" }
 			</button>
 		</form>
 	</div>
+}
+
+templ InscripcionFormOOB(socios []sqlc.Socio, categorias []sqlc.Categoria) { 
+	<div hx-swap-oob="outerHTML:#inscripcion-form-container"> 
+		@InscripcionForm(socios, categorias) 
+	</div> 
 }
