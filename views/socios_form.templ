@@ -2,13 +2,13 @@ package views
 
 // SocioForm renderiza el formulario de alta de socio
 templ SocioForm() {
-	<div class="form-container">
+	<div id="deportes-list-container" class="form-container">
 		<div class="form-header">
 			<h2>Agregar Nuevo Socio</h2>
 			<p class="descripcion-seccion">Vinculá un usuario existente al padrón del club mediante su DNI.</p>
 		</div>
 
-		<form id="form-socio" class="form-flex" action="/socios" method="POST">
+		<form id="form-socio" class="form-flex" action="/socios" method="POST" hx-post="/socios" hx-target="#socios-list-container" hx-swap="outerHTML">
 			<div class="campo-grupo">
 				<label for="id_usuario-socio">ID de Usuario</label>
 				<input
@@ -44,8 +44,14 @@ templ SocioForm() {
 			</div>
 
 			<button type="submit" id="agregarSocio" class="btn-primario">
-				+ Registrar Socio
+				{ "+ Registrar Socio" }
 			</button>
 		</form>
 	</div>
+}
+
+templ SocioFormOOB() { 
+	<div hx-swap-oob="outerHTML:#socio-form-container"> 
+		@SocioForm() 
+	</div> 
 }

@@ -28,6 +28,7 @@ templ SociosList(socios []sqlc.Socio) {
 							<th>DNI</th>
 							<th>Fecha de Alta</th>
 							<th>Estado / Baja</th>
+							Acciones
 						</tr>
 					</thead>
 					<tbody>
@@ -42,6 +43,11 @@ templ SociosList(socios []sqlc.Socio) {
 									} else {
 										<span class="badge badge-activo">Activo</span>
 									}
+								</td>
+								<td class="col-acciones texto-derecha">
+									<button type="button" class="btn-eliminar" hx-delete={ fmt.Sprintf("/socios?id=%d", s.IDUsuario) } hx-target="closest tr" hx-swap="outerHTML" hx-confirm="¿Seguro que deseas eliminar a este socio?">
+										Eliminar
+									</button>
 								</td>
 							</tr>
 						}

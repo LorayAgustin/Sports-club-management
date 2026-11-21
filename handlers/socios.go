@@ -26,6 +26,8 @@ func (h *SocioHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		h.Index(w, r)
 	case http.MethodPost:
 		h.Create(w, r)
+	case http.MethodDelete:
+		h.Delete(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -117,6 +119,35 @@ func (h *SocioHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirección PRG (Post/Redirect/Get)
-	http.Redirect(w, r, "/socios", http.StatusSeeOther)
+	socios, err := h.queries.ListSocios(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener socios actualizados: %v", err)
+		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
+		return
+	}
+	if err := views.SociosList(socios).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar listado de socios: %v", err)
+		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
+		return
+	}
+	if err := views.SocioFormOOB().Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar formulario OOB de socio: %v", err)
+	}
+
+}
+
+func (h *SocioHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id <= 0 {
+		http.Error(w, "ID de socio no válido", http.StatusBadRequest)
+		return
+	}
+	err = h.queries.DeleteSocio(r.Context(), int32(id))
+	if err != nil {
+		log.Printf("Error al eliminar socio: %v", err)
+		http.Error(w, "Error al eliminar en la base de datos", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
