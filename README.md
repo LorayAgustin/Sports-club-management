@@ -16,6 +16,7 @@ Este repositorio contiene la resolución del **TP6: Interfaces dinámicas con HT
 | **Base de datos** | PostgreSQL 16 (Alpine) | Persistencia de datos |
 | **Acceso a datos** | `sqlc` + `pgx/v5` | Generación de código Go tipado a partir de consultas SQL |
 | **Vistas** | `templ` | Plantillas HTML tipadas, compiladas a código Go |
+| **Interactividad** | HTMX | Peticiones asíncronas e intercambio parcial de fragmentos HTML (*swaps* y *OOB*) |
 | **Estilos** | CSS | Hojas de estilo estáticas en `/static` |
 | **Infraestructura** | Docker / Docker Compose | Orquestación de la aplicación y la base de datos |
 | **Automatización** | Bash (`run-app.sh`) | Build, ejecución y limpieza automatizada del entorno |
