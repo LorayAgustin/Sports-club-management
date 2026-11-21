@@ -2,13 +2,18 @@ package views
 
 // PredioForm renderiza el formulario de alta de predio
 templ PredioForm() {
-	<div class="form-container">
+	<div class="form-container" id="predio-form">
 		<div class="form-header">
 			<h2>Agregar Nuevo Predio</h2>
 			<p class="descripcion-seccion">Registrá una nueva sede o complejo deportivo con su ubicación.</p>
 		</div>
 
-		<form id="form-predio" class="form-flex" action="/predios" method="POST">
+		<form 
+			hx-post="/predios" 
+			hx-target="#predios-list" 
+			hx-swap="outerHTML" 
+			class="form-flex"
+		>
 			<div class="campo-grupo">
 				<label for="nombre-predio">Nombre del Predio</label>
 				<input
@@ -37,4 +42,11 @@ templ PredioForm() {
 			</button>
 		</form>
 	</div>
+}
+
+// Componente Wrapper para la técnica Out-of-Band Swap (OOB) de la cátedra 
+templ PredioFormOOB() { 
+	<div hx-swap-oob="outerHTML:#predio-form"> 
+		@PredioForm() 
+	</div> 
 }

@@ -3,6 +3,8 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	sqlc "cl_gst/db/sqlc"
 	"cl_gst/logic"
@@ -19,17 +21,38 @@ func NewPredioHandler(queries *sqlc.Queries) *PredioHandler {
 
 // Handler central para la ruta /deportes (despacha GET o POST según el método HTTP)
 func (h *PredioHandler) Handle(w http.ResponseWriter, r *http.Request) {
+	path := strings.TrimPrefix(r.URL.Path, "/predios")
+	path = strings.TrimPrefix(path, "/")
+
+	// Ruta base: /predios
+	if path == "" {
+		switch r.Method {
+		case http.MethodGet:
+			h.Index(w, r)
+		case http.MethodPost:
+			h.Create(w, r)
+		default:
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+		return
+	}
+
+	// Ruta con ID: /predios/{id}
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		http.Error(w, "ID de predio inválido", http.StatusBadRequest)
+		return
+	}
+
 	switch r.Method {
-	case http.MethodGet:
-		h.Index(w, r)
-	case http.MethodPost:
-		h.Create(w, r)
+	case http.MethodDelete:
+		h.Delete(w, r, int32(id))
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 }
 
-// GET /predios: Muestra la página con el formulario y la tabla de predios
+// GET /predios: Renderiza la página completa inicial (Layout + Formulario + Lista)
 func (h *PredioHandler) Index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/predios" && r.URL.Path != "/" {
 		http.NotFound(w, r)
@@ -81,8 +104,8 @@ func (h *PredioHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err := h.queries.CreatePredio(r.Context(), sqlc.CreatePredioParams{
-		Nombre:    nombre,
-		Direccion: direccion,
+		Nombre:    predioInput.Nombre,
+		Direccion: predioInput.Direccion,
 	})
 	if err != nil {
 		log.Printf("Error al crear predio: %v", err)
@@ -90,6 +113,35 @@ func (h *PredioHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirección PRG a la lista de predios
-	http.Redirect(w, r, "/predios", http.StatusSeeOther)
+	// Consultar la lista actualizada de predios
+	predios, err := h.queries.ListPredios(r.Context())
+	if err != nil {
+		http.Error(w, "Error al obtener la lista de predios", http.StatusInternalServerError)
+		return
+	}
+
+	// Renderizar el 1er fragmento HTML: Lista actualizada (apunta a hx-target="#predios-list")
+	if err := views.PrediosList(predios).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar lista parcial de predios: %v", err)
+		http.Error(w, "Error al actualizar la lista", http.StatusInternalServerError)
+		return
+	}
+
+	// Renderizar el 2do fragmento HTML: Formulario limpio OOB (reemplaza #predio-form)
+	if err := views.PredioFormOOB().Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar formulario OOB: %v", err)
+	}
+}
+
+// DELETE /predios/{id}: Borra en BD y devuelve 200 OK vacío para que HTMX remueva la fila
+func (h *PredioHandler) Delete(w http.ResponseWriter, r *http.Request, id int32) {
+	err := h.queries.DeletePredio(r.Context(), id)
+	if err != nil {
+		log.Printf("Error al eliminar predio ID %d: %v", id, err)
+		http.Error(w, "Error al eliminar de la base de datos", http.StatusInternalServerError)
+		return
+	}
+
+	// Respuesta vacía con estado 200 OK
+	w.WriteHeader(http.StatusOK)
 }
