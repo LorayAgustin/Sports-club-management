@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv" //se encarga de realizar conversiones entre tipos de datos básicos y sus representaciones en formato de texto (string).
 	"time"
 
 	sqlc "cl_gst/db/sqlc"
@@ -18,13 +19,15 @@ func NewUsuarioHandler(queries *sqlc.Queries) *UsuarioHandler {
 	return &UsuarioHandler{queries: queries}
 }
 
-// Handler central para la ruta /deportes (despacha GET o POST según el método HTTP)
+// Handle redirige peticiones GET, POST o DELETE
 func (h *UsuarioHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		h.Index(w, r)
 	case http.MethodPost:
 		h.Create(w, r)
+	case http.MethodDelete:
+		h.Delete(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -51,13 +54,8 @@ func (h *UsuarioHandler) Index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// POST /usuarios: Procesa los datos del formulario, valida e inserta un nuevo usuario
+// POST /usuarios: Alta vía HTMX
 func (h *UsuarioHandler) Create(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Leer los datos enviados por el <form action="/usuarios" method="POST">
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
@@ -91,7 +89,7 @@ func (h *UsuarioHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 4. Guardar en PostgreSQL usando la consulta generada por sqlc
+	// Guardar en PostgreSQL usando la consulta generada por sqlc
 	_, err = h.queries.CreateUsuario(r.Context(), sqlc.CreateUsuarioParams{
 		Nombre:          userInput.Nombre,
 		Email:           userInput.Email,
@@ -105,6 +103,47 @@ func (h *UsuarioHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Redirección PRG (Post/Redirect/Get) para evitar reenvíos al refrescar (F5)
-	http.Redirect(w, r, "/usuarios", http.StatusSeeOther)
+	// Consultar la lista actualizada de usuarios
+	usuarios, err := h.queries.ListUsuarios(r.Context())
+	if err != nil {
+		log.Printf("Error al obtener lista de usuarios: %v", err)
+		http.Error(w, "Error al actualizar la lista", http.StatusInternalServerError)
+		return
+	}
+
+	// Renderizar el fragmento de la lista (reemplaza #usuarios-list-container)
+	if err := views.UsuariosList(usuarios).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar lista: %v", err)
+		http.Error(w, "Error interno al generar respuesta", http.StatusInternalServerError)
+		return
+	}
+
+	// Renderizar el formulario OOB (reemplaza #usuario-form-container fuera de banda)
+	if err := views.UsuarioFormOOB().Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar formulario OOB: %v", err)
+	}
+}
+
+// DELETE (Borrado dinámico)
+func (h *UsuarioHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		http.Error(w, "ID no proporcionado", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil || id <= 0 {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.queries.DeleteUsuario(r.Context(), int32(id)); err != nil {
+		log.Printf("Error al eliminar usuario %d: %v", id, err)
+		http.Error(w, "Error al eliminar usuario", http.StatusInternalServerError)
+		return
+	}
+
+	// Devuelve 200 OK con contenido vacío para que HTMX remueva la fila
+	w.WriteHeader(http.StatusOK)
 }

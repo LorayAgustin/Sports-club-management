@@ -48,7 +48,14 @@ templ UsuariosList(usuarios []sqlc.Usuario) {
 								</td>
 								<td class="col-acciones texto-derecha">
 									<form action={ templ.SafeURL(fmt.Sprintf("/usuarios/eliminar?id=%d", u.ID)) } method="POST" class="form-inline">
-										<button type="submit" class="btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar este usuario?');">
+										<button 
+											type="button"
+											class="btn-eliminar"
+											hx-delete={ fmt.Sprintf("/usuarios?id=%d", u.ID) }
+											hx-target="closest tr"
+											hx-swap="outerHTML"
+											hx-confirm="¿Estás seguro de eliminar este usuario?"
+										>
 											Eliminar
 										</button>
 									</form>

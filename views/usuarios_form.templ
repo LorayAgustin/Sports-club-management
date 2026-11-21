@@ -2,15 +2,21 @@ package views
 
 // UsuarioForm renderiza el formulario de alta de usuario
 templ UsuarioForm() {
-	<div class="form-container">
+	<div class="form-container" id="usuario-form-container">
 		<div class="form-header">
 			<h2>Agregar Nuevo Usuario</h2>
 			<p class="descripcion-seccion">Ingresá las credenciales y el rol asignado al usuario.</p>
 		</div>
 
-		<form id="form-usuario" class="form-flex" action="/usuarios" method="POST">
+		<form
+			id="form-usuario"
+			class="form-flex"
+			hx-post="/usuarios"
+			hx-target="#usuarios-list-container"
+			hx-swap="outerHTML"
+		>
 			<div class="campo-grupo">
-				<label for="nombre-usuario">Nombre Completo</label>
+				<label for="nombre-usuario">Nombre Completo:</label>
 				<input
 					type="text"
 					id="nombre-usuario"
@@ -66,5 +72,12 @@ templ UsuarioForm() {
 				+ Registrar Usuario
 			</button>
 		</form>
+	</div>
+}
+
+// UsuarioFormOOB genera el fragmento Out-of-Band para resetear el formulario (Punto 3 del TP6)
+templ UsuarioFormOOB() {
+	<div hx-swap-oob="outerHTML:#usuario-form-container">
+		@UsuarioForm()
 	</div>
 }
