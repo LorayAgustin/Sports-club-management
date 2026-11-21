@@ -28,7 +28,7 @@ templ PracticaContent(title string, practicas []sqlc.Practica, categorias []sqlc
 
 		<!-- Tarjeta 2: Listado de Prácticas -->
 		<section class="tarjeta-seccion">
-			@PracticasList(practicas)
+			@PracticasList(practicas, categorias, predios)
 		</section>
 	</main>
 }

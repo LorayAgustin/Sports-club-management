@@ -152,11 +152,6 @@ func (h *PracticaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error interno en la base de datos", http.StatusInternalServerError)
 		return
 	}
-	if err := views.PracticasList(practicas).Render(r.Context(), w); err != nil {
-		log.Printf("Error al renderizar listado de prácticas: %v", err)
-		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
-		return
-	}
 	categorias, err := h.queries.ListCategorias(r.Context())
 	if err != nil {
 		log.Printf("Error al obtener categorías para reseteo OOB: %v", err)
@@ -165,6 +160,11 @@ func (h *PracticaHandler) Create(w http.ResponseWriter, r *http.Request) {
 	predios, err := h.queries.ListPredios(r.Context())
 	if err != nil {
 		log.Printf("Error al obtener predios para reseteo OOB: %v", err)
+		return
+	}
+	if err := views.PracticasList(practicas, categorias, predios).Render(r.Context(), w); err != nil {
+		log.Printf("Error al renderizar listado de prácticas: %v", err)
+		http.Error(w, "Error interno al generar la vista", http.StatusInternalServerError)
 		return
 	}
 	if err := views.PracticaFormOOB(categorias, predios).Render(r.Context(), w); err != nil {
